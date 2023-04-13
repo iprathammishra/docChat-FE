@@ -10,13 +10,7 @@ import { SparkleFilled } from "@fluentui/react-icons";
 
 import styles from "./Chat.module.css";
 
-import {
-  chatApi,
-  Approaches,
-  AskResponse,
-  ChatRequest,
-  ChatTurn,
-} from "../../api";
+import { chatApi } from "../../api";
 import { Answer, AnswerError, AnswerLoading } from "../../components/Answer";
 import { QuestionInput } from "../../components/QuestionInput";
 import { ExampleList } from "../../components/Example";
@@ -60,23 +54,9 @@ const Chat = () => {
     setActiveAnalysisPanelTab(undefined);
 
     try {
-      const history = answers.map((a) => ({ user: a[0], bot: a[1].answer }));
-      const request = {
-        history: [...history, { user: question, bot: undefined }],
-        approach: Approaches.ReadRetrieveRead,
-        overrides: {
-          promptTemplate:
-            promptTemplate.length === 0 ? undefined : promptTemplate,
-          excludeCategory:
-            excludeCategory.length === 0 ? undefined : excludeCategory,
-          top: retrieveCount,
-          semanticRanker: useSemanticRanker,
-          semanticCaptions: useSemanticCaptions,
-          suggestFollowupQuestions: useSuggestFollowupQuestions,
-        },
-      };
-      const result = await chatApi(request);
-      setAnswers([...answers, [question, result]]);
+      const res = await chatApi(question);
+      //   const result = res.answer;
+      setAnswers([...answers, [question, res]]);
     } catch (e) {
       setError(e);
     } finally {
@@ -195,19 +175,11 @@ const Chat = () => {
                         activeAnalysisPanelTab !== undefined
                       }
                       onCitationClicked={(c) => onShowCitation(c, index)}
-                      onThoughtProcessClicked={() =>
-                        onToggleTab(AnalysisPanelTabs.ThoughtProcessTab, index)
-                      }
                       onSupportingContentClicked={() =>
                         onToggleTab(
                           AnalysisPanelTabs.SupportingContentTab,
                           index
                         )
-                      }
-                      onFollowupQuestionClicked={(q) => makeApiRequest(q)}
-                      showFollowupQuestions={
-                        useSuggestFollowupQuestions &&
-                        answers.length - 1 === index
                       }
                     />
                   </div>
@@ -239,7 +211,7 @@ const Chat = () => {
           <div className={styles.chatInput}>
             <QuestionInput
               clearOnSend
-              placeholder="Type a new question (e.g. does my plan cover annual eye exams?)"
+              placeholder="Ask me anything..."
               disabled={isLoading}
               onSend={(question) => makeApiRequest(question)}
             />

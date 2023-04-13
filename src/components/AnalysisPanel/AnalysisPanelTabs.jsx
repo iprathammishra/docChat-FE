@@ -1,5 +1,4 @@
-// export enum AnalysisPanelTabs {
-//     ThoughtProcessTab = "thoughtProcess",
-//     SupportingContentTab = "supportingContent",
-//     CitationTab = "citation"
-// }
+export const AnalysisPanelTabs = {
+  SupportingContentTab: "supportingContent",
+  CitationTab: "citation",
+};

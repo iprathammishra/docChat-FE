@@ -1,10 +1,10 @@
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Stack, IconButton } from "@fluentui/react";
 import DOMPurify from "dompurify";
 
 import styles from "./Answer.module.css";
 
-import { AskResponse, getCitationFilePath } from "../../api";
+import { getCitationFilePath } from "../../api";
 import { parseAnswerToHtml } from "./AnswerParser";
 import { AnswerIcon } from "./AnswerIcon";
 
@@ -12,17 +12,30 @@ export const Answer = ({
   answer,
   isSelected,
   onCitationClicked,
-  onThoughtProcessClicked,
   onSupportingContentClicked,
-  onFollowupQuestionClicked,
-  showFollowupQuestions,
 }) => {
-  const parsedAnswer = useMemo(
-    () => parseAnswerToHtml(answer.answer, onCitationClicked),
-    [answer]
-  );
+  const [citations, setCitatitons] = useState([]);
 
-  const sanitizedAnswerHtml = DOMPurify.sanitize(parsedAnswer.answerHtml);
+  useEffect(() => {
+    const tempArr = [];
+    const set = new Set();
+    answer.citations.filter((citation) => {
+      const file = citation.metadata.file;
+      if (!set.has(file)) {
+        tempArr.push(citation);
+        set.add(file);
+      }
+    });
+    console.log(set);
+    setCitatitons([...tempArr]);
+  }, []);
+
+  // const parsedAnswer = useMemo(
+  //   () => parseAnswerToHtml(answer.answer, onCitationClicked),
+  //   [answer.answer]
+  // );
+
+  // const sanitizedAnswerHtml = DOMPurify.sanitize(parsedAnswer.answerHtml);
 
   return (
     <Stack
@@ -33,21 +46,21 @@ export const Answer = ({
         <Stack horizontal horizontalAlign="space-between">
           <AnswerIcon />
           <div>
-            <IconButton
+            {/* <IconButton
               style={{ color: "black" }}
               iconProps={{ iconName: "Lightbulb" }}
               title="Show thought process"
               ariaLabel="Show thought process"
               onClick={() => onThoughtProcessClicked()}
               disabled={!answer.thoughts}
-            />
+            /> */}
             <IconButton
               style={{ color: "black" }}
               iconProps={{ iconName: "ClipboardList" }}
               title="Show supporting content"
               ariaLabel="Show supporting content"
               onClick={() => onSupportingContentClicked()}
-              disabled={!answer.data_points.length}
+              // disabled={!answer.data_points.length}
             />
           </div>
         </Stack>
@@ -56,63 +69,38 @@ export const Answer = ({
       <Stack.Item grow>
         <div
           className={styles.answerText}
-          dangerouslySetInnerHTML={{ __html: sanitizedAnswerHtml }}
-        ></div>
+          // dangerouslySetInnerHTML={{ __html: sanitizedAnswerHtml }}
+        >
+          {answer.answer}
+        </div>
       </Stack.Item>
 
-      {!!parsedAnswer.citations.length && (
+      {citations.length !== 0 && (
         <Stack.Item>
           <Stack horizontal wrap tokens={{ childrenGap: 5 }}>
             <span className={styles.citationLearnMore}>Citations:</span>
-            {parsedAnswer.citations.map((x, i) => {
-              const path = getCitationFilePath(x);
+            {citations.map((x, i) => {
+              const file = x.metadata.file;
+              {
+                /* const path = getCitationFilePath(file); */
+              }
+              const src = `http://localhost:9000/docs/${file}`;
               return (
                 <a
                   key={i}
+                  target="_blank"
                   className={styles.citation}
                   title={x}
-                  onClick={() => onCitationClicked(path)}
+                  // href={src}
+                  onClick={() => onCitationClicked(src)}
                 >
-                  {`${++i}. ${x}`}
+                  {`${++i}. ${file}`}
                 </a>
               );
             })}
           </Stack>
         </Stack.Item>
       )}
-
-      {!!parsedAnswer.followupQuestions.length &&
-        showFollowupQuestions &&
-        onFollowupQuestionClicked && (
-          <Stack.Item>
-            <Stack
-              horizontal
-              wrap
-              className={`${
-                !!parsedAnswer.citations.length
-                  ? styles.followupQuestionsList
-                  : ""
-              }`}
-              tokens={{ childrenGap: 6 }}
-            >
-              <span className={styles.followupQuestionLearnMore}>
-                Follow-up questions:
-              </span>
-              {parsedAnswer.followupQuestions.map((x, i) => {
-                return (
-                  <a
-                    key={i}
-                    className={styles.followupQuestion}
-                    title={x}
-                    onClick={() => onFollowupQuestionClicked(x)}
-                  >
-                    {`${x}`}
-                  </a>
-                );
-              })}
-            </Stack>
-          </Stack.Item>
-        )}
     </Stack>
   );
 };
