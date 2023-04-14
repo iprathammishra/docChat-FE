@@ -1,17 +1,28 @@
-export async function chatApi(question) {
-  const response = await fetch(`http://localhost:9000/query?q=${question}`, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
+import axios from "axios";
 
-  const parsedResponse = await response.json();
-  if (response.status > 299 || !response.ok) {
+export async function chatApi(question) {
+  const response = await axios.get(
+    `http://localhost:9000/query?q=${question}`,
+    {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }
+  );
+  const parsedResponse = await response.data;
+  if (response.status > 299 || response.statusText !== "OK") {
     throw Error(parsedResponse.error || "Unknown error");
   }
-
   return parsedResponse;
+}
+
+export async function uploadFilesApi(formData) {
+  const data = {
+    files: [...formData.getAll("files")],
+  };
+  console.log(data);
+  const response = await axios.post(`http://localhost:9000/upload`, formData);
+  return response.statusText;
 }
 
 export function getCitationFilePath(citation) {

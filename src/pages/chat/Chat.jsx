@@ -10,7 +10,7 @@ import { SparkleFilled } from "@fluentui/react-icons";
 
 import styles from "./Chat.module.css";
 
-import { chatApi } from "../../api";
+import { chatApi, uploadFilesApi } from "../../api";
 import { Answer, AnswerError, AnswerLoading } from "../../components/Answer";
 import { QuestionInput } from "../../components/QuestionInput";
 import { ExampleList } from "../../components/Example";
@@ -21,6 +21,7 @@ import {
 } from "../../components/AnalysisPanel";
 import { SettingsButton } from "../../components/SettingsButton";
 import { ClearChatButton } from "../../components/ClearChatButton";
+import UploadButton from "../../components/UploadButton/UploadButton";
 
 const Chat = () => {
   const [isConfigPanelOpen, setIsConfigPanelOpen] = useState(false);
@@ -31,6 +32,7 @@ const Chat = () => {
   const [excludeCategory, setExcludeCategory] = useState("");
   const [useSuggestFollowupQuestions, setUseSuggestFollowupQuestions] =
     useState(false);
+  const [selectedFiles, setSelectedFiles] = useState([]);
 
   const lastQuestionRef = useRef("");
   const chatMessageStreamEnd = useRef(null);
@@ -77,6 +79,26 @@ const Chat = () => {
     [isLoading]
   );
 
+  // useEffect(
+  //   () => chatMessageStreamEnd.current?.scrollIntoView({ behavior: "smooth" }),
+  //   [selectedFile]
+  // );
+
+  // useEffect(() => {
+  //   if (selectedFiles.length !== 0) {
+  //     const formData = new FormData();
+  //     for (let i = 0; i < selectedFiles.length; i++) {
+  //       console.log(selectedFiles[i]);
+  //       formData.append("files", selectedFiles[i]);
+  //     }
+  //     uploadFilesApi(formData);
+  //   }
+  // }, [selectedFiles]);
+
+  // const handleFileInputChange = (event) => {
+  //   setSelectedFiles(Array.from(event.target.files));
+  // };
+
   const onPromptTemplateChange = (_ev, newValue) => {
     setPromptTemplate(newValue || "");
   };
@@ -104,6 +126,10 @@ const Chat = () => {
   const onExampleClicked = (example) => {
     makeApiRequest(example);
   };
+
+  // const handleUpload = () => {
+  //   fileInputRef.current.click();
+  // };
 
   const onShowCitation = (citation, index) => {
     if (
@@ -138,6 +164,22 @@ const Chat = () => {
           onClick={clearChat}
           disabled={!lastQuestionRef.current || isLoading}
         />
+        <UploadButton
+          selectedFiles={selectedFiles}
+          setSelectedFiles={setSelectedFiles}
+          className={styles.commandButton}
+        />
+        {/* <UploadButton
+          handleUpload={handleUpload}
+          className={styles.commandButton}
+        /> */}
+        {/* <input
+          type="file"
+          multiple
+          style={{ display: "none" }}
+          ref={fileInputRef}
+          onChange={handleFileInputChange}
+        /> */}
         <SettingsButton
           className={styles.commandButton}
           onClick={() => setIsConfigPanelOpen(!isConfigPanelOpen)}

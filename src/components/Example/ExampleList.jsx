@@ -13,8 +13,8 @@ const EXAMPLES = [
     value: "What are the services provided by Gutenberg?",
   },
   {
-    text: "Who is Mudit Gupta and how can help an organization?",
-    value: "Who is Mudit Gupta and how can help an organization?",
+    text: "What is the media approach and strategy of Gutenberg?",
+    value: "What is the media approach and strategy of Gutenberg?",
   },
 ];
 

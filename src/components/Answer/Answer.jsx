@@ -1,11 +1,8 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { Stack, IconButton } from "@fluentui/react";
-import DOMPurify from "dompurify";
 
 import styles from "./Answer.module.css";
 
-import { getCitationFilePath } from "../../api";
-import { parseAnswerToHtml } from "./AnswerParser";
 import { AnswerIcon } from "./AnswerIcon";
 
 export const Answer = ({
@@ -29,13 +26,6 @@ export const Answer = ({
     console.log(set);
     setCitatitons([...tempArr]);
   }, []);
-
-  // const parsedAnswer = useMemo(
-  //   () => parseAnswerToHtml(answer.answer, onCitationClicked),
-  //   [answer.answer]
-  // );
-
-  // const sanitizedAnswerHtml = DOMPurify.sanitize(parsedAnswer.answerHtml);
 
   return (
     <Stack
