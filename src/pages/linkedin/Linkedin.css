@@ -1,0 +1,275 @@
+/* LinkedIn CSS */
+
+header {
+  background-color: #0a66c2;
+  width: 100vw;
+  padding: 15px 30px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+  position: relative;
+}
+
+header p {
+  margin-bottom: 0;
+  color: white;
+  text-decoration: none;
+}
+
+.nav-chat {
+  margin-left: 10px;
+}
+
+.logo {
+  width: 35px;
+}
+
+h1 {
+  font-size: 20px;
+}
+
+.company-name {
+  color: white;
+}
+
+.search-filter {
+  width: 100vw;
+  display: flex;
+  height: 40px;
+  margin: 10px 0;
+  padding: 0 20px;
+}
+
+.search-bar {
+  display: flex;
+  align-items: center;
+  width: 70%;
+  height: 40px;
+  justify-content: center;
+}
+
+.filter-options {
+  display: flex;
+  justify-content: space-evenly;
+  width: 30%;
+  height: 100%;
+  margin: 0 auto;
+}
+
+.filter-options select {
+  width: 45%;
+  height: 40px;
+}
+
+.card {
+  background-color: #fff;
+  padding: 20px;
+  margin: 20px;
+  border-radius: 4px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+  transition-duration: 300ms;
+  cursor: pointer;
+}
+
+.card:hover {
+  box-shadow: rgba(50, 50, 93, 0.25) 0px 6px 12px -2px,
+    rgba(0, 0, 0, 0.3) 0px 3px 7px -3px;
+}
+
+.bio {
+  margin-top: 5px;
+  font-size: 15px;
+}
+
+.location {
+  margin-top: 5px;
+  font-size: 13px;
+  color: grey;
+}
+
+.name {
+  font-weight: bold;
+  text-decoration: none;
+  color: #0a66c2;
+}
+
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-content {
+  width: 500px;
+  height: 200px;
+  display: flex;
+  flex-direction: row;
+  position: relative;
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 4px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+  gap: 15px;
+}
+
+.profile-image img {
+  height: 100%;
+  border-radius: 50%;
+}
+
+.user-name {
+  color: #0a66c2;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.user-from {
+  font-size: 13px;
+}
+
+.user-company {
+  display: flex;
+  width: 100%;
+  gap: 5px;
+}
+
+.user-company p,
+.user-company span {
+  font-size: 15px;
+  color: rgb(43, 43, 43);
+  margin: 0;
+}
+
+.user-location {
+  font-size: 13px;
+  color: grey;
+}
+
+.user-bio {
+  font-size: 15px;
+  line-height: 20px;
+}
+
+.profile-details {
+  width: 70%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 4px;
+}
+
+.close-btn {
+  position: absolute;
+  right: 10px;
+  top: 8px;
+  outline: none;
+  border: none;
+  font-size: 20px;
+  border-radius: 50%;
+  cursor: pointer;
+  color: #474747;
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  margin: 20px 0;
+}
+
+.active {
+  font-weight: bold;
+}
+
+.react-autosuggest__container {
+  position: relative;
+  width: 100%;
+}
+
+.react-autosuggest__input {
+  width: 100%;
+  height: 100%;
+  padding: 10px 20px;
+  font-family: Helvetica, sans-serif;
+  font-weight: 300;
+  font-size: 16px;
+  border: 1px solid #aaa;
+  border-radius: 4px;
+}
+
+.react-autosuggest__input--focused {
+  outline: none;
+}
+
+.react-autosuggest__input--open {
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.react-autosuggest__suggestions-container {
+  display: none;
+}
+
+.react-autosuggest__suggestions-container--open {
+  display: block;
+  position: absolute;
+  top: 51px;
+  width: 100%;
+  border: 1px solid #aaa;
+  background-color: #fff;
+  font-family: Helvetica, sans-serif;
+  font-weight: 300;
+  font-size: 16px;
+  border-bottom-left-radius: 4px;
+  border-bottom-right-radius: 4px;
+  z-index: 2;
+}
+
+.react-autosuggest__suggestions-list {
+  margin: 0;
+  padding: 0;
+  list-style-type: none;
+}
+
+.react-autosuggest__suggestion {
+  cursor: pointer;
+  padding: 10px 20px;
+}
+
+.react-autosuggest__suggestion--highlighted {
+  background-color: #ddd;
+}
+
+/* Media queries for responsiveness */
+@media screen and (max-width: 1024px) {
+  .filter-options {
+    flex-wrap: wrap;
+    justify-content: space-around;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .filter-options {
+    width: 80%;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  header {
+    flex-direction: column;
+  }
+
+  h1 {
+    font-size: 20px;
+  }
+
+  .filter-options {
+    width: 100%;
+  }
+}

@@ -7,10 +7,8 @@ import {
   SpinButton,
 } from "@fluentui/react";
 import { SparkleFilled } from "@fluentui/react-icons";
-
 import styles from "./Chat.module.css";
-
-import { chatApi, uploadFilesApi } from "../../api";
+import { chatApi } from "../../api";
 import { Answer, AnswerError, AnswerLoading } from "../../components/Answer";
 import { QuestionInput } from "../../components/QuestionInput";
 import { ExampleList } from "../../components/Example";
@@ -33,6 +31,7 @@ const Chat = () => {
   const [useSuggestFollowupQuestions, setUseSuggestFollowupQuestions] =
     useState(false);
   const [selectedFiles, setSelectedFiles] = useState([]);
+  const [history, setHistory] = useState([]);
 
   const lastQuestionRef = useRef("");
   const chatMessageStreamEnd = useRef(null);
@@ -47,6 +46,9 @@ const Chat = () => {
   const [selectedAnswer, setSelectedAnswer] = useState(0);
   const [answers, setAnswers] = useState([]);
 
+  useEffect(() => {
+    console.log(history);
+  }, [history]);
   const makeApiRequest = async (question) => {
     lastQuestionRef.current = question;
 
@@ -56,9 +58,10 @@ const Chat = () => {
     setActiveAnalysisPanelTab(undefined);
 
     try {
-      const res = await chatApi(question);
-      //   const result = res.answer;
+      const res = await chatApi(question, history);
+      console.log(res);
       setAnswers([...answers, [question, res]]);
+      setHistory([...history, [question, res.answer]]);
     } catch (e) {
       setError(e);
     } finally {
@@ -78,26 +81,6 @@ const Chat = () => {
     () => chatMessageStreamEnd.current?.scrollIntoView({ behavior: "smooth" }),
     [isLoading]
   );
-
-  // useEffect(
-  //   () => chatMessageStreamEnd.current?.scrollIntoView({ behavior: "smooth" }),
-  //   [selectedFile]
-  // );
-
-  // useEffect(() => {
-  //   if (selectedFiles.length !== 0) {
-  //     const formData = new FormData();
-  //     for (let i = 0; i < selectedFiles.length; i++) {
-  //       console.log(selectedFiles[i]);
-  //       formData.append("files", selectedFiles[i]);
-  //     }
-  //     uploadFilesApi(formData);
-  //   }
-  // }, [selectedFiles]);
-
-  // const handleFileInputChange = (event) => {
-  //   setSelectedFiles(Array.from(event.target.files));
-  // };
 
   const onPromptTemplateChange = (_ev, newValue) => {
     setPromptTemplate(newValue || "");
@@ -126,10 +109,6 @@ const Chat = () => {
   const onExampleClicked = (example) => {
     makeApiRequest(example);
   };
-
-  // const handleUpload = () => {
-  //   fileInputRef.current.click();
-  // };
 
   const onShowCitation = (citation, index) => {
     if (
@@ -169,17 +148,6 @@ const Chat = () => {
           setSelectedFiles={setSelectedFiles}
           className={styles.commandButton}
         />
-        {/* <UploadButton
-          handleUpload={handleUpload}
-          className={styles.commandButton}
-        /> */}
-        {/* <input
-          type="file"
-          multiple
-          style={{ display: "none" }}
-          ref={fileInputRef}
-          onChange={handleFileInputChange}
-        /> */}
         <SettingsButton
           className={styles.commandButton}
           onClick={() => setIsConfigPanelOpen(!isConfigPanelOpen)}
@@ -191,7 +159,7 @@ const Chat = () => {
             <div className={styles.chatEmptyState}>
               <SparkleFilled
                 fontSize={"120px"}
-                primaryFill={"rgba(115, 118, 225, 1)"}
+                primaryFill={"#1078e7"}
                 aria-hidden="true"
                 aria-label="Chat logo"
               />

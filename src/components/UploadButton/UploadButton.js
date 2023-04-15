@@ -35,6 +35,12 @@ const UploadButton = ({ className, selectedFiles, setSelectedFiles }) => {
     setSelectedFiles(Array.from(event.target.files));
   };
 
+  const removeFile = (i) => {
+    const tempArr = selectedFiles;
+    tempArr.splice(i, 1);
+    setSelectedFiles([...tempArr]);
+  };
+
   return (
     <div className={`${className ?? ""}`}>
       <div onClick={showModal} className={styles.container}>
@@ -60,13 +66,13 @@ const UploadButton = ({ className, selectedFiles, setSelectedFiles }) => {
         <div className={styles.modal_header}>
           <p
             onClick={() => setActive("local")}
-            className={active === "local" && `${styles.active}`}
+            className={active === "local" ? `${styles.active}` : ""}
           >
             Local Files
           </p>
           <p
             onClick={() => setActive("onedrive")}
-            className={active === "onedrive" && `${styles.active}`}
+            className={active === "onedrive" ? `${styles.active}` : ""}
           >
             OneDrive
           </p>
@@ -91,7 +97,10 @@ const UploadButton = ({ className, selectedFiles, setSelectedFiles }) => {
               return (
                 <div key={i} className={styles.added_file}>
                   <p className={styles.file_name}>{file.name}</p>
-                  <IconButton iconProps={cancelIcon} />
+                  <IconButton
+                    onClick={() => removeFile(i)}
+                    iconProps={cancelIcon}
+                  />
                 </div>
               );
             })}
