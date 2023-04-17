@@ -1,0 +1,146 @@
+.auth {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: "Mukta", sans-serif;
+  background: linear-gradient(90deg, #d5edff 0%, #c7d5ff 100%);
+}
+
+.auth-content {
+  background-color: #e1e8eeda;
+  padding: 40px;
+  border-radius: 10px;
+  width: 50%;
+  min-width: 380px;
+  box-shadow: #32325d40 0px 50px 100px -20px, #0000004d 0px 30px 60px -30px;
+}
+
+.auth-header {
+  font-size: 33px;
+  font-weight: 500;
+  line-height: 35px;
+}
+
+.header-text,
+.or,
+.auth-text {
+  font-size: 12px;
+  letter-spacing: 1px;
+  color: #6d6d6d;
+}
+
+.labels {
+  color: #666666;
+  font-size: 13px;
+}
+
+.input {
+  font-family: "Mukta", sans-serif;
+  color: #484848;
+  font-size: 13px;
+  width: 100%;
+  height: 35px;
+  margin-bottom: 10px;
+  margin-top: 2px;
+  background-color: #b8c5cd69;
+  border: none;
+  outline: none;
+  border-radius: 10px;
+  padding: 0 15px;
+}
+
+.password {
+  margin-bottom: 0;
+}
+
+.password-container {
+  margin-bottom: 20px;
+  position: relative;
+}
+
+.show {
+  border-radius: 0 10px 10px 0;
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  color: #7d7d7d;
+  width: 40px;
+  height: 35px;
+  border-left: 1px solid #7f7f7f68;
+  background-color: #cedce969;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+
+.auth-form-container {
+  margin: 10px 0;
+}
+
+.auth-btn {
+  font-family: "Mukta", sans-serif;
+  cursor: pointer;
+  width: 100%;
+  height: 40px;
+  color: white;
+  text-transform: uppercase;
+  background-image: linear-gradient(
+    to right,
+    #00aaff 0%,
+    #7bbbfa 51%,
+    #00aaff 100%
+  );
+  border: none;
+  text-decoration: none;
+  outline: none;
+  border-radius: 20px;
+  margin-top: 10px;
+  background-size: 200% auto;
+  transition: 0.3s;
+  letter-spacing: 1px;
+  font-weight: 500;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.auth-btn:hover {
+  background-position: right center;
+}
+
+.signup-link,
+.login-link {
+  font-family: "Mukta", sans-serif;
+  color: #1f75ff;
+}
+
+.loaders div {
+  position: relative;
+}
+
+.loader span {
+  display: block;
+  width: 20px;
+  height: 20px;
+  border: 3px solid;
+  border-radius: 50%;
+  border-color: transparent #ffffff #ffffff;
+  -webkit-animation: cssload-spin 690ms infinite linear;
+  animation: cssload-spin 690ms infinite linear;
+}
+
+@-webkit-keyframes cssload-spin {
+  100% {
+    transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+@keyframes cssload-spin {
+  100% {
+    transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
