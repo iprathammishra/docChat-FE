@@ -17,7 +17,7 @@ const CardLayout = ({ data }) => {
   );
 
   return (
-    <div>
+    <div style={{ paddingBottom: "10px" }}>
       {displayItems.map((item, index) => (
         <div
           key={index}

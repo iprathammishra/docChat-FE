@@ -29,8 +29,8 @@ const Linkedin = () => {
       const uniqueLocations = [];
       const uniqueFrom = [];
       for (const data of jsonData) {
-        if (!uniqueLocations.includes(data.location) && data.location !== "") {
-          uniqueLocations.push(data.location);
+        if (!uniqueLocations.includes(data.City) && data.City !== "") {
+          uniqueLocations.push(data.City);
         }
         if (!uniqueFrom.includes(data.from)) {
           uniqueFrom.push(data.from);

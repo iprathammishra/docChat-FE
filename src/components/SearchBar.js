@@ -25,7 +25,10 @@ const SearchBar = ({
     }
 
     const regex = new RegExp("^" + escapedValue, "i");
-    const suggestions = filteredData.filter((obj) => regex.test(obj.name));
+    const suggestions = [
+      ...filteredData.filter((obj) => regex.test(obj.company)),
+      ...filteredData.filter((obj) => regex.test(obj.name)),
+    ];
 
     if (suggestions.length === 0) {
       return [{ isAddNew: true }];

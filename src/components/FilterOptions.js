@@ -16,7 +16,7 @@ const FilterOptions = ({
     let filtered = data;
     if (filters.location.applied) {
       filtered = filtered.filter(
-        (item) => item["location"] === filters.location.value
+        (item) => item["City"] === filters.location.value
       );
     }
     if (filters.from.applied) {
