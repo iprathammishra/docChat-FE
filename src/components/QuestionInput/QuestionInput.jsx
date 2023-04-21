@@ -12,6 +12,14 @@ export const QuestionInput = ({
 }) => {
   const [question, setQuestion] = useState("");
 
+  const maxHeight = 300;
+
+  const textAreaStyle = {
+    maxHeight: `${maxHeight}px`,
+    height: "auto",
+    overflowY: "auto",
+  };
+
   const sendQuestion = () => {
     if (disabled || !question.trim()) {
       return;
@@ -48,6 +56,7 @@ export const QuestionInput = ({
         placeholder={placeholder}
         multiline
         resizable={false}
+        style={textAreaStyle}
         borderless
         value={question}
         onChange={onQuestionChange}

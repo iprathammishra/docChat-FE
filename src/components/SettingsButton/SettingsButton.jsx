@@ -7,7 +7,7 @@ export const SettingsButton = ({ className, onClick }) => {
   return (
     <div className={`${styles.container} ${className ?? ""}`} onClick={onClick}>
       <Settings24Regular />
-      <Text>{"Settings"}</Text>
+      <Text>{"Prompts"}</Text>
     </div>
   );
 };

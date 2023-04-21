@@ -1,9 +1,12 @@
 import { useEffect, useState } from "react";
 import { Stack, IconButton } from "@fluentui/react";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
 import styles from "./Answer.module.css";
 
 import { AnswerIcon } from "./AnswerIcon";
+let marked = require("marked");
 
 export const Answer = ({
   answer,
@@ -17,7 +20,7 @@ export const Answer = ({
     const tempArr = [];
     const set = new Set();
     answer.citations.filter((citation) => {
-      const file = citation.metadata.file;
+      const file = citation[0].metadata.file;
       if (!set.has(file)) {
         tempArr.push(citation);
         set.add(file);
@@ -57,12 +60,15 @@ export const Answer = ({
       </Stack.Item>
 
       <Stack.Item grow>
-        <div
+        <ReactMarkdown
+          remarkPlugins={[remarkGfm]}
           className={styles.answerText}
-          // dangerouslySetInnerHTML={{ __html: sanitizedAnswerHtml }}
+          // dangerouslySetInnerHTML={{
+          //   __html: marked(answer.answer),
+          // }}
         >
           {answer.answer}
-        </div>
+        </ReactMarkdown>
       </Stack.Item>
 
       {citations.length !== 0 && (
@@ -70,7 +76,7 @@ export const Answer = ({
           <Stack horizontal wrap tokens={{ childrenGap: 5 }}>
             <span className={styles.citationLearnMore}>Citations:</span>
             {citations.map((x, i) => {
-              const file = x.metadata.file;
+              const file = x[0].metadata.file;
               {
                 /* const path = getCitationFilePath(file); */
               }

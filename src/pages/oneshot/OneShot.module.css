@@ -1,66 +1,117 @@
 .oneshotContainer {
-    display: flex;
-    flex: 1;
-    flex-direction: column;
-    align-items: center;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
 }
 
 .oneshotTopSection {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
 }
 
 .oneshotBottomSection {
-    display: flex;
-    flex: 1;
-    flex-wrap: wrap;
-    justify-content: center;
-    align-content: flex-start;
-    width: 100%;
-    margin-top: 20px;
+  display: flex;
+  flex: 1;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-content: flex-start;
+  width: 100%;
+  margin-top: 20px;
 }
 
 .oneshotTitle {
-    font-size: 4rem;
-    font-weight: 600;
-    margin-top: 130px;
+  font-size: 4rem;
+  font-weight: 600;
+  margin-top: 130px;
 }
 
 @media only screen and (max-width: 800px) {
-    .oneshotTitle {
-        font-size: 3rem;
-        font-weight: 600;
-        margin-top: 0;
-    }
+  .oneshotTitle {
+    font-size: 3rem;
+    font-weight: 600;
+    margin-top: 0;
+  }
 }
 
 .oneshotQuestionInput {
-    max-width: 800px;
-    width: 100%;
-    padding-left: 10px;
-    padding-right: 10px;
+  max-width: 800px;
+  width: 100%;
+  padding-left: 10px;
+  padding-right: 10px;
 }
 
 .oneshotAnswerContainer {
-    max-width: 800px;
-    width: 100%;
-    padding-left: 10px;
-    padding-right: 10px;
+  max-width: 800px;
+  width: 100%;
+  padding-left: 10px;
+  padding-right: 10px;
 }
 
 .oneshotAnalysisPanel {
-    width: 600px;
-    margin-left: 20px;
+  width: 600px;
+  margin-left: 20px;
 }
 
 .oneshotSettingsSeparator {
-    margin-top: 15px;
+  margin-top: 15px;
 }
 
 .settingsButton {
-    align-self: flex-end;
-    margin-right: 20px;
-    margin-top: 20px;
+  align-self: flex-end;
+  margin-right: 20px;
+  margin-top: 20px;
+}
+
+.filterContainer {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.searchbar,
+.filter {
+  border-radius: 5px;
+  outline: none;
+  height: 30px;
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+  border: 1px solid #b7b7b73a;
+  /* border: none; */
+  background-color: #f0f0f0;
+  padding: 0 5px;
+}
+
+.searchbar {
+  width: 70%;
+  padding: 0 8px;
+}
+
+.filter {
+  width: 30%;
+}
+
+.promptList {
+  margin-top: 15px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  gap: 15px;
+}
+
+.promptContainer {
+  box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px,
+    rgba(60, 64, 67, 0.15) 0px 2px 6px 2px;
+  position: relative;
+  width: 100%;
+  background-color: #dbdbdb;
+  padding: 10px 10px;
+  border-radius: 10px;
+}
+
+.prompt {
+  width: 90%;
 }

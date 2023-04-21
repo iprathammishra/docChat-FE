@@ -1,8 +1,8 @@
 import axios from "axios";
 
-export async function chatApi(question, history) {
+export async function chatApi(question, history, mode) {
   const body = { question: question, history: history };
-  const response = await axios.post(`http://localhost:9000/query`, body);
+  const response = await axios.post(`http://localhost:9000/query${mode}`, body);
 
   // const response = await axios.get(
   //   `http://localhost:9000/query?q=${question}`,

@@ -1,4 +1,6 @@
 import { useRef, useState, useEffect } from "react";
+// import anime from "animejs/lib/anime.es.js";
+// import anime from "animejs";
 import {
   Checkbox,
   Panel,
@@ -20,8 +22,23 @@ import {
 import { SettingsButton } from "../../components/SettingsButton";
 import { ClearChatButton } from "../../components/ClearChatButton";
 import UploadButton from "../../components/UploadButton/UploadButton";
+import ToggleButton from "@mui/material/ToggleButton";
+import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
+import { styled } from "@mui/material/styles";
+import { Switch, Typography } from "@mui/material";
+import Stack from "@mui/material/Stack";
+import PromptsList from "../oneshot/PromptsList";
 
 const Chat = () => {
+  // const [active, setActive] = useState(true);
+  // const [trigger, setTrigger] = useState(true);
+
+  // const checkbox = useRef(null);
+  // const checkboxOn = useRef(null);
+  // const checkboxOff = useRef(null);
+
+  const [mode, setMode] = useState("QnA");
+
   const [isConfigPanelOpen, setIsConfigPanelOpen] = useState(false);
   const [promptTemplate, setPromptTemplate] = useState("");
   const [retrieveCount, setRetrieveCount] = useState(5);
@@ -46,10 +63,152 @@ const Chat = () => {
   const [selectedAnswer, setSelectedAnswer] = useState(0);
   const [answers, setAnswers] = useState([]);
 
+  const AntSwitch = styled(Switch)(({ theme }) => ({
+    width: 28,
+    height: 16,
+    padding: 0,
+    display: "flex",
+    "&:active": {
+      "& .MuiSwitch-thumb": {
+        width: 15,
+      },
+      "& .MuiSwitch-switchBase.Mui-checked": {
+        transform: "translateX(9px)",
+      },
+    },
+    "& .MuiSwitch-switchBase": {
+      padding: 2,
+      "&.Mui-checked": {
+        transform: "translateX(12px)",
+        color: "#fff",
+        "& + .MuiSwitch-track": {
+          opacity: 1,
+          backgroundColor:
+            theme.palette.mode === "dark" ? "#177ddc" : "#1890ff",
+        },
+      },
+    },
+    "& .MuiSwitch-thumb": {
+      boxShadow: "0 2px 4px 0 rgb(0 35 11 / 20%)",
+      width: 12,
+      height: 12,
+      borderRadius: 6,
+      transition: theme.transitions.create(["width"], {
+        duration: 200,
+      }),
+    },
+    "& .MuiSwitch-track": {
+      borderRadius: 16 / 2,
+      opacity: 1,
+      backgroundColor:
+        theme.palette.mode === "dark"
+          ? "rgba(255,255,255,.35)"
+          : "rgba(0,0,0,.25)",
+      boxSizing: "border-box",
+    },
+  }));
+
+  const handleChange = () => {
+    if (mode === "QnA") {
+      setMode("Generative");
+    } else {
+      setMode("QnA");
+    }
+  };
+
   useEffect(() => {
-    console.log(history);
-  }, [history]);
-  const makeApiRequest = async (question) => {
+    console.log(mode);
+  }, [mode]);
+
+  // useEffect(() => {
+  //   anime({
+  //     targets: checkboxOn.current,
+  //     translateX: "0",
+  //     zIndex: {
+  //       value: [1, 2],
+  //       round: true,
+  //     },
+  //     duration: 0,
+  //   });
+
+  //   anime({
+  //     targets: checkboxOff.current,
+  //     translateX: "-100%",
+  //     zIndex: {
+  //       value: [2, 1],
+  //       round: true,
+  //     },
+  //     duration: 0,
+  //   });
+  // }, []);
+
+  // useEffect(() => {
+  //   if (!active) {
+  //     checkbox.current.removeAttribute("checked");
+  //     animate(checkboxOff.current, checkboxOn.current, "0%", "100%");
+  //   } else {
+  //     checkbox.current.setAttribute("checked", true);
+  //     animate(checkboxOn.current, checkboxOff.current, "0%", "-100%");
+  //   }
+  // }, [active]);
+
+  // const handleClick = () => {
+  //   console.log(active);
+  //   if (trigger) {
+  //     setActive(!active);
+  //     setTrigger(false);
+  //   }
+  // };
+
+  // const animate = (
+  //   firstTarget,
+  //   secondTarget,
+  //   firstTranslate,
+  //   secondTranslate
+  // ) => {
+  //   anime({
+  //     targets: firstTarget,
+  //     translateX: ["0%", "100%"], // from 100 to 250
+
+  //     direction: "normal",
+  //   });
+  //   setTrigger(true);
+
+  //   // anime({
+  //   //   targets: firstTarget,
+  //   //   zIndex: {
+  //   //     value: [1, 2],
+  //   //     round: true,
+  //   //   },
+  //   //   duration: 0,
+  //   // });
+
+  //   // anime({
+  //   //   targets: secondTarget,
+  //   //   zIndex: {
+  //   //     value: [2, 1],
+  //   //     round: true,
+  //   //   },
+  //   //   duration: 0,
+  //   // });
+
+  //   // anime({
+  //   //   targets: firstTarget,
+  //   //   translateX: firstTranslate,
+  //   //   duration: 500,
+  //   //   easing: "easeInOutQuad",
+  //   //   complete: () => {
+  //   //     anime({
+  //   //       targets: secondTarget,
+  //   //       translateX: secondTranslate,
+  //   //       duration: 0,
+  //   //     });
+  //   //     setTrigger(true);
+  //   //   },
+  //   // });
+  // };
+
+  const makeApiRequest = async (question, mode) => {
     lastQuestionRef.current = question;
 
     error && setError(undefined);
@@ -58,8 +217,7 @@ const Chat = () => {
     setActiveAnalysisPanelTab(undefined);
 
     try {
-      const res = await chatApi(question, history);
-      console.log(res);
+      const res = await chatApi(question, history, mode);
       setAnswers([...answers, [question, res]]);
       setHistory([...history, [question, res.answer]]);
     } catch (e) {
@@ -107,7 +265,7 @@ const Chat = () => {
   };
 
   const onExampleClicked = (example) => {
-    makeApiRequest(example);
+    makeApiRequest(example, mode);
   };
 
   const onShowCitation = (citation, index) => {
@@ -166,10 +324,49 @@ const Chat = () => {
               <h1 className={styles.chatEmptyStateTitle}>
                 Chat with your data
               </h1>
-              <h2 className={styles.chatEmptyStateSubtitle}>
-                Ask anything or try an example
-              </h2>
-              <ExampleList onExampleClicked={onExampleClicked} />
+              <Stack
+                sx={{ marginTop: "20px", transform: "scale(1.2)" }}
+                direction="row"
+                spacing={1}
+                alignItems="center"
+              >
+                <Typography>Q&A</Typography>
+                <AntSwitch
+                  onChange={handleChange}
+                  checked={mode === "Generative"}
+                  inputProps={{ "aria-label": "ant design" }}
+                  // value={mode}
+                />
+                <Typography>Generative</Typography>
+              </Stack>
+              {/* <ToggleButtonGroup
+                color="primary"
+                value={alignment}
+                exclusive
+                onChange={handleChange}
+                aria-label="Platform"
+              >
+                <ToggleButton value="qna">Q&A</ToggleButton>
+                <ToggleButton value="generative">Generative</ToggleButton>
+              </ToggleButtonGroup> */}
+              {/* <div className={`${styles.checkbox} ${active && "active"}`}>
+                <input
+                  type="checkbox"
+                  id="checkbox"
+                  checked
+                  name="checkbox"
+                  onClick={handleClick}
+                  ref={checkbox}
+                />
+                <label for="checkbox"></label>
+                <div className={styles.on} ref={checkboxOn}>
+                  <span>Q&A</span>
+                </div>
+                <div className={styles.off} ref={checkboxOn}>
+                  <span>Generative</span>
+                </div>
+              </div> */}
+              {/* <ExampleList onExampleClicked={onExampleClicked} /> */}
             </div>
           ) : (
             <div className={styles.chatMessageStream}>
@@ -209,7 +406,9 @@ const Chat = () => {
                   <div className={styles.chatMessageGptMinWidth}>
                     <AnswerError
                       error={error.toString()}
-                      onRetry={() => makeApiRequest(lastQuestionRef.current)}
+                      onRetry={() =>
+                        makeApiRequest(lastQuestionRef.current, mode)
+                      }
                     />
                   </div>
                 </>
@@ -223,7 +422,7 @@ const Chat = () => {
               clearOnSend
               placeholder="Ask me anything..."
               disabled={isLoading}
-              onSend={(question) => makeApiRequest(question)}
+              onSend={(question) => makeApiRequest(question, mode)}
             />
           </div>
         </div>
@@ -240,7 +439,7 @@ const Chat = () => {
         )}
 
         <Panel
-          headerText="Configure answer generation"
+          headerText="Prompts"
           isOpen={isConfigPanelOpen}
           isBlocking={false}
           onDismiss={() => setIsConfigPanelOpen(false)}
@@ -252,47 +451,7 @@ const Chat = () => {
           )}
           isFooterAtBottom={true}
         >
-          <TextField
-            className={styles.chatSettingsSeparator}
-            defaultValue={promptTemplate}
-            label="Override prompt template"
-            multiline
-            autoAdjustHeight
-            onChange={onPromptTemplateChange}
-          />
-
-          <SpinButton
-            className={styles.chatSettingsSeparator}
-            label="Retrieve this many documents from search:"
-            min={1}
-            max={50}
-            defaultValue={retrieveCount.toString()}
-            onChange={onRetrieveCountChange}
-          />
-          <TextField
-            className={styles.chatSettingsSeparator}
-            label="Exclude category"
-            onChange={onExcludeCategoryChanged}
-          />
-          <Checkbox
-            className={styles.chatSettingsSeparator}
-            checked={useSemanticRanker}
-            label="Use semantic ranker for retrieval"
-            onChange={onUseSemanticRankerChange}
-          />
-          <Checkbox
-            className={styles.chatSettingsSeparator}
-            checked={useSemanticCaptions}
-            label="Use query-contextual summaries instead of whole documents"
-            onChange={onUseSemanticCaptionsChange}
-            disabled={!useSemanticRanker}
-          />
-          <Checkbox
-            className={styles.chatSettingsSeparator}
-            checked={useSuggestFollowupQuestions}
-            label="Suggest follow-up questions"
-            onChange={onUseSuggestFollowupQuestionsChange}
-          />
+          <PromptsList />
         </Panel>
       </div>
     </div>

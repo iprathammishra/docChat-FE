@@ -4,11 +4,6 @@ import styles from "./Example.module.css";
 
 const EXAMPLES = [
   {
-    text: "List down the companies and their respective retainer fee that Gutenberg has charged them.",
-    value:
-      "List down the companies and their respective retainer fee that Gutenberg has charged them.",
-  },
-  {
     text: "What are the services provided by Gutenberg?",
     value: "What are the services provided by Gutenberg?",
   },
