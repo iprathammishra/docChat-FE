@@ -16,10 +16,10 @@ const Navbar = () => {
       <img src="GutenbergLogo.png" alt="Logo" className="logo" />
       <div className="nav-items">
         <NavLink to="/">
-          <p className="nav-chat">Chat</p>
+          <p className="nav-item nav-chat">Chat</p>
         </NavLink>
         <NavLink to="/linkedin">
-          <p className="nav-linkedin">LinkedIn Connections</p>
+          <p className="nav-item nav-linkedin">LinkedIn Connections</p>
         </NavLink>
         <i
           title="Log Out"
