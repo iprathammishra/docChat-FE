@@ -4,6 +4,7 @@ import SearchBar from "../../components/SearchBar";
 import FilterOptions from "../../components/FilterOptions";
 // import WorldMap from "../../components/WorldMap";
 import CardLayout from "../../components/CardLayout";
+import { BASE_URL } from "../../utils/config";
 
 const Linkedin = () => {
   const [data, setData] = useState([]);
@@ -23,7 +24,7 @@ const Linkedin = () => {
 
   const fetchData = async () => {
     try {
-      const response = await fetch("http://localhost:9000/api/data");
+      const response = await fetch(`${BASE_URL}/api/data`);
       const jsonData = await response.json();
       setData(jsonData);
       const uniqueLocations = [];

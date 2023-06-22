@@ -1,17 +1,9 @@
 import axios from "axios";
+import { BASE_URL } from "../utils/config";
 
 export async function chatApi(question, history, mode) {
   const body = { question: question, history: history };
-  const response = await axios.post(`http://localhost:9000/query${mode}`, body);
-
-  // const response = await axios.get(
-  //   `http://localhost:9000/query?q=${question}`,
-  //   {
-  //     headers: {
-  //       "Content-Type": "application/json",
-  //     },
-  //   }
-  // );
+  const response = await axios.post(`${BASE_URL}/query${mode}`, body);
   const parsedResponse = await response.data;
   if (response.status > 299 || response.statusText !== "OK") {
     throw Error(parsedResponse.error || "Unknown error");
@@ -20,7 +12,7 @@ export async function chatApi(question, history, mode) {
 }
 
 export async function uploadFilesApi(formData) {
-  const response = await axios.post(`http://localhost:9000/upload`, formData);
+  const response = await axios.post(`${BASE_URL}/upload`, formData);
   return response.statusText;
 }
 

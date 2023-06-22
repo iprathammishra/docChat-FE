@@ -3,6 +3,7 @@ import React, { useState, useContext } from "react";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import ContextData from "../../contexts/contextData";
+import { BASE_URL } from "../../utils/config";
 import "./Login.css";
 
 const Login = () => {
@@ -11,9 +12,6 @@ const Login = () => {
   const [cred, setCred] = useState({});
   const navigate = useNavigate();
   const dataCtx = useContext(ContextData);
-
-
-  const BASE_URL = "http://localhost:9000";
 
   const authHandler = async (e) => {
     e.preventDefault();

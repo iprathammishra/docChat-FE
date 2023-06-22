@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Stack, IconButton } from "@fluentui/react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-
+import { BASE_URL } from "../../utils/config";
 import styles from "./Answer.module.css";
 
 import { AnswerIcon } from "./AnswerIcon";
@@ -26,7 +26,7 @@ export const Answer = ({
         set.add(file);
       }
     });
-    console.log(set);
+    // console.log(set);
     setCitatitons([...tempArr]);
   }, []);
 
@@ -80,7 +80,7 @@ export const Answer = ({
               {
                 /* const path = getCitationFilePath(file); */
               }
-              const src = `http://localhost:9000/docs/${file}`;
+              const src = `${BASE_URL}/docs/${file}`;
               return (
                 <a
                   key={i}

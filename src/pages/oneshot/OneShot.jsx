@@ -2,7 +2,6 @@ import { useRef, useState } from "react";
 import {
   Checkbox,
   ChoiceGroup,
-  IChoiceGroupOption,
   Panel,
   DefaultButton,
   Spinner,
@@ -12,7 +11,7 @@ import {
 
 import styles from "./OneShot.module.css";
 
-import { askApi, Approaches, AskResponse, AskRequest } from "../../api";
+import { askApi, Approaches } from "../../api";
 import { Answer, AnswerError } from "../../components/Answer";
 import { QuestionInput } from "../../components/QuestionInput";
 import { ExampleList } from "../../components/Example";

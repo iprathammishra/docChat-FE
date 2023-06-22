@@ -18,14 +18,14 @@ const Navbar = () => {
         <NavLink to="/">
           <p className="nav-item nav-chat">Chat</p>
         </NavLink>
-        <NavLink to="/linkedin">
+        {/* <NavLink to="/linkedin">
           <p className="nav-item nav-linkedin">LinkedIn Connections</p>
-        </NavLink>
+        </NavLink> */}
         <i
           title="Log Out"
           style={{ color: "white", cursor: "pointer" }}
           onClick={logout}
-          class="fa-solid fa-right-from-bracket"
+          className="fa-solid fa-right-from-bracket"
         ></i>
       </div>
     </header>
