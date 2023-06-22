@@ -52,7 +52,6 @@ const PromptsList = () => {
   const [searched, setSearched] = useState(filtered);
 
   useEffect(() => {
-    // console.log(filtered);
     if (search === "") setSearched([...filtered]);
     else {
       const searchedPrompts = filtered.filter((prompt) =>

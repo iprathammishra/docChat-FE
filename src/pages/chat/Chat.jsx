@@ -1,19 +1,10 @@
 import { useRef, useState, useEffect } from "react";
-// import anime from "animejs/lib/anime.es.js";
-// import anime from "animejs";
-import {
-  Checkbox,
-  Panel,
-  DefaultButton,
-  TextField,
-  SpinButton,
-} from "@fluentui/react";
+import { Panel, DefaultButton } from "@fluentui/react";
 import { SparkleFilled } from "@fluentui/react-icons";
 import styles from "./Chat.module.css";
 import { chatApi } from "../../api";
 import { Answer, AnswerError, AnswerLoading } from "../../components/Answer";
 import { QuestionInput } from "../../components/QuestionInput";
-import { ExampleList } from "../../components/Example";
 import { UserChatMessage } from "../../components/UserChatMessage";
 import {
   AnalysisPanel,
@@ -22,46 +13,30 @@ import {
 import { SettingsButton } from "../../components/SettingsButton";
 import { ClearChatButton } from "../../components/ClearChatButton";
 import UploadButton from "../../components/UploadButton/UploadButton";
-import ToggleButton from "@mui/material/ToggleButton";
-import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
 import { styled } from "@mui/material/styles";
 import { Switch, Typography } from "@mui/material";
 import Stack from "@mui/material/Stack";
 import PromptsList from "../oneshot/PromptsList";
+import { ClearNamespace } from "../../components/ClearNamespace";
+import { BASE_URL } from "../../utils/config";
+import axios from "axios";
 
 const Chat = () => {
-  // const [active, setActive] = useState(true);
-  // const [trigger, setTrigger] = useState(true);
-
-  // const checkbox = useRef(null);
-  // const checkboxOn = useRef(null);
-  // const checkboxOff = useRef(null);
-
   const [mode, setMode] = useState("QnA");
-
   const [isConfigPanelOpen, setIsConfigPanelOpen] = useState(false);
-  const [promptTemplate, setPromptTemplate] = useState("");
-  const [retrieveCount, setRetrieveCount] = useState(5);
-  const [useSemanticRanker, setUseSemanticRanker] = useState(true);
-  const [useSemanticCaptions, setUseSemanticCaptions] = useState(false);
-  const [excludeCategory, setExcludeCategory] = useState("");
-  const [useSuggestFollowupQuestions, setUseSuggestFollowupQuestions] =
-    useState(false);
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [history, setHistory] = useState([]);
-
-  const lastQuestionRef = useRef("");
-  const chatMessageStreamEnd = useRef(null);
-
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState();
-
+  const [streamData, setStreamData] = useState();
   const [activeCitation, setActiveCitation] = useState();
   const [activeAnalysisPanelTab, setActiveAnalysisPanelTab] =
     useState(undefined);
-
   const [selectedAnswer, setSelectedAnswer] = useState(0);
   const [answers, setAnswers] = useState([]);
+  const lastQuestionRef = useRef("");
+  const chatMessageStreamEnd = useRef(null);
+  let something = "";
 
   const AntSwitch = styled(Switch)(({ theme }) => ({
     width: 28,
@@ -116,98 +91,6 @@ const Chat = () => {
     }
   };
 
-  useEffect(() => {
-    console.log(mode);
-  }, [mode]);
-
-  // useEffect(() => {
-  //   anime({
-  //     targets: checkboxOn.current,
-  //     translateX: "0",
-  //     zIndex: {
-  //       value: [1, 2],
-  //       round: true,
-  //     },
-  //     duration: 0,
-  //   });
-
-  //   anime({
-  //     targets: checkboxOff.current,
-  //     translateX: "-100%",
-  //     zIndex: {
-  //       value: [2, 1],
-  //       round: true,
-  //     },
-  //     duration: 0,
-  //   });
-  // }, []);
-
-  // useEffect(() => {
-  //   if (!active) {
-  //     checkbox.current.removeAttribute("checked");
-  //     animate(checkboxOff.current, checkboxOn.current, "0%", "100%");
-  //   } else {
-  //     checkbox.current.setAttribute("checked", true);
-  //     animate(checkboxOn.current, checkboxOff.current, "0%", "-100%");
-  //   }
-  // }, [active]);
-
-  // const handleClick = () => {
-  //   console.log(active);
-  //   if (trigger) {
-  //     setActive(!active);
-  //     setTrigger(false);
-  //   }
-  // };
-
-  // const animate = (
-  //   firstTarget,
-  //   secondTarget,
-  //   firstTranslate,
-  //   secondTranslate
-  // ) => {
-  //   anime({
-  //     targets: firstTarget,
-  //     translateX: ["0%", "100%"], // from 100 to 250
-
-  //     direction: "normal",
-  //   });
-  //   setTrigger(true);
-
-  //   // anime({
-  //   //   targets: firstTarget,
-  //   //   zIndex: {
-  //   //     value: [1, 2],
-  //   //     round: true,
-  //   //   },
-  //   //   duration: 0,
-  //   // });
-
-  //   // anime({
-  //   //   targets: secondTarget,
-  //   //   zIndex: {
-  //   //     value: [2, 1],
-  //   //     round: true,
-  //   //   },
-  //   //   duration: 0,
-  //   // });
-
-  //   // anime({
-  //   //   targets: firstTarget,
-  //   //   translateX: firstTranslate,
-  //   //   duration: 500,
-  //   //   easing: "easeInOutQuad",
-  //   //   complete: () => {
-  //   //     anime({
-  //   //       targets: secondTarget,
-  //   //       translateX: secondTranslate,
-  //   //       duration: 0,
-  //   //     });
-  //   //     setTrigger(true);
-  //   //   },
-  //   // });
-  // };
-
   const makeApiRequest = async (question, mode) => {
     lastQuestionRef.current = question;
 
@@ -217,13 +100,24 @@ const Chat = () => {
     setActiveAnalysisPanelTab(undefined);
 
     try {
+      const eventSource = new EventSource(`${BASE_URL}/stream`);
+      eventSource.addEventListener("message", (event) => {
+        const data = JSON.parse(event.data);
+        something += data.answer;
+        if (something !== "") {
+          setIsLoading(false);
+        }
+        setStreamData(something);
+        setAnswers([...answers, [question, data]]);
+      });
       const res = await chatApi(question, history, mode);
-      setAnswers([...answers, [question, res]]);
+      if (res) {
+        setStreamData("");
+        eventSource.close();
+      }
       setHistory([...history, [question, res.answer]]);
     } catch (e) {
       setError(e);
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -233,40 +127,17 @@ const Chat = () => {
     setActiveCitation(undefined);
     setActiveAnalysisPanelTab(undefined);
     setAnswers([]);
+    setHistory([]);
+  };
+
+  const clearDocs = async () => {
+    await axios.get(`${BASE_URL}/delete?namespace=docs-pdf`);
   };
 
   useEffect(
     () => chatMessageStreamEnd.current?.scrollIntoView({ behavior: "smooth" }),
-    [isLoading]
+    [streamData]
   );
-
-  const onPromptTemplateChange = (_ev, newValue) => {
-    setPromptTemplate(newValue || "");
-  };
-
-  const onRetrieveCountChange = (_ev, newValue) => {
-    setRetrieveCount(parseInt(newValue || "3"));
-  };
-
-  const onUseSemanticRankerChange = (_ev, checked) => {
-    setUseSemanticRanker(!!checked);
-  };
-
-  const onUseSemanticCaptionsChange = (_ev, checked) => {
-    setUseSemanticCaptions(!!checked);
-  };
-
-  const onExcludeCategoryChanged = (_ev, newValue) => {
-    setExcludeCategory(newValue || "");
-  };
-
-  const onUseSuggestFollowupQuestionsChange = (_ev, checked) => {
-    setUseSuggestFollowupQuestions(!!checked);
-  };
-
-  const onExampleClicked = (example) => {
-    makeApiRequest(example, mode);
-  };
 
   const onShowCitation = (citation, index) => {
     if (
@@ -296,6 +167,7 @@ const Chat = () => {
   return (
     <div className={styles.container}>
       <div className={styles.commandsContainer}>
+        <ClearNamespace className={styles.commandButton} onClick={clearDocs} />
         <ClearChatButton
           className={styles.commandButton}
           onClick={clearChat}
@@ -335,38 +207,9 @@ const Chat = () => {
                   onChange={handleChange}
                   checked={mode === "Generative"}
                   inputProps={{ "aria-label": "ant design" }}
-                  // value={mode}
                 />
                 <Typography>Generative</Typography>
               </Stack>
-              {/* <ToggleButtonGroup
-                color="primary"
-                value={alignment}
-                exclusive
-                onChange={handleChange}
-                aria-label="Platform"
-              >
-                <ToggleButton value="qna">Q&A</ToggleButton>
-                <ToggleButton value="generative">Generative</ToggleButton>
-              </ToggleButtonGroup> */}
-              {/* <div className={`${styles.checkbox} ${active && "active"}`}>
-                <input
-                  type="checkbox"
-                  id="checkbox"
-                  checked
-                  name="checkbox"
-                  onClick={handleClick}
-                  ref={checkbox}
-                />
-                <label for="checkbox"></label>
-                <div className={styles.on} ref={checkboxOn}>
-                  <span>Q&A</span>
-                </div>
-                <div className={styles.off} ref={checkboxOn}>
-                  <span>Generative</span>
-                </div>
-              </div> */}
-              {/* <ExampleList onExampleClicked={onExampleClicked} /> */}
             </div>
           ) : (
             <div className={styles.chatMessageStream}>
@@ -406,9 +249,9 @@ const Chat = () => {
                   <div className={styles.chatMessageGptMinWidth}>
                     <AnswerError
                       error={error.toString()}
-                      onRetry={() =>
-                        makeApiRequest(lastQuestionRef.current, mode)
-                      }
+                      // onRetry={() =>
+                      //   makeApiRequest(lastQuestionRef.current, mode)
+                      // }
                     />
                   </div>
                 </>
@@ -421,7 +264,7 @@ const Chat = () => {
             <QuestionInput
               clearOnSend
               placeholder="Ask me anything..."
-              disabled={isLoading}
+              disabled={isLoading || streamData}
               onSend={(question) => makeApiRequest(question, mode)}
             />
           </div>

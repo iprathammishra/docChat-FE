@@ -18,14 +18,13 @@ import Chat from "./pages/chat/Chat";
 import Linkedin from "./pages/linkedin/Linkedin";
 import Navbar from "./components/Navbar";
 import axios from "axios";
+import { BASE_URL } from "./utils/config";
 import { ContextDataProvider } from "./contexts/contextData.js";
 
 initializeIcons();
 
-const BASE_URL = "http://localhost:9000";
-
 export default function App() {
-  const { user, setUser, userId } = useContext(ContextData);
+  const { setUser, userId } = useContext(ContextData);
 
   useEffect(() => {
     if (userId) {

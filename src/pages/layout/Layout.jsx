@@ -1,6 +1,5 @@
-import { Outlet, NavLink, Link } from "react-router-dom";
+import { Outlet } from "react-router-dom";
 
-import github from "../../assets/github.svg";
 import "../../pages/linkedin/Linkedin.css";
 import styles from "./Layout.module.css";
 

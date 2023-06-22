@@ -24,7 +24,7 @@ const UploadButton = ({ className, selectedFiles, setSelectedFiles }) => {
       formData.append("files", selectedFiles[i]);
     }
     const status = await uploadFilesApi(formData);
-    if (status === "OK") {
+    if (status <= 299) {
       setFilesLoaded(true);
       hideModal();
       setSelectedFiles([]);
