@@ -18,11 +18,14 @@ import { Switch, Typography } from "@mui/material";
 import Stack from "@mui/material/Stack";
 import PromptsList from "../oneshot/PromptsList";
 import { ClearNamespace } from "../../components/ClearNamespace";
+import { useBoolean } from "@fluentui/react-hooks";
 import { BASE_URL } from "../../utils/config";
 import axios from "axios";
 
 const Chat = () => {
   const [mode, setMode] = useState("QnA");
+  const [isModalOpen, { setTrue: showModal, setFalse: hideModal }] =
+    useBoolean(false);
   const [isConfigPanelOpen, setIsConfigPanelOpen] = useState(false);
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [history, setHistory] = useState([]);
@@ -131,7 +134,9 @@ const Chat = () => {
   };
 
   const clearDocs = async () => {
-    await axios.get(`${BASE_URL}/delete?namespace=docs-pdf`);
+    showModal();
+    const response = await axios.get(`${BASE_URL}/delete?namespace=docs-pdf`);
+    if (response.status <= 299 || response.statusText === "OK") hideModal();
   };
 
   useEffect(
@@ -167,7 +172,13 @@ const Chat = () => {
   return (
     <div className={styles.container}>
       <div className={styles.commandsContainer}>
-        <ClearNamespace className={styles.commandButton} onClick={clearDocs} />
+        <ClearNamespace
+          className={styles.commandButton}
+          isModalOpen={isModalOpen}
+          showModal={showModal}
+          hideModal={hideModal}
+          onClick={clearDocs}
+        />
         <ClearChatButton
           className={styles.commandButton}
           onClick={clearChat}
