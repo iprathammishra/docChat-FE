@@ -1,7 +1,5 @@
-import { useMemo } from "react";
 import { Modal, Text } from "@fluentui/react";
 import { Delete24Regular } from "@fluentui/react-icons";
-import { useBoolean } from "@fluentui/react-hooks";
 import styles from "./ClearNamespace.module.css";
 
 export const ClearNamespace = ({

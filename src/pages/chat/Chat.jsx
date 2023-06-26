@@ -21,6 +21,7 @@ import { ClearNamespace } from "../../components/ClearNamespace";
 import { useBoolean } from "@fluentui/react-hooks";
 import { BASE_URL } from "../../utils/config";
 import axios from "axios";
+import { Strawman } from "../../components/Strawman/Strawman";
 
 const Chat = () => {
   const [mode, setMode] = useState("QnA");
@@ -39,7 +40,7 @@ const Chat = () => {
   const [answers, setAnswers] = useState([]);
   const lastQuestionRef = useRef("");
   const chatMessageStreamEnd = useRef(null);
-  let something = "";
+  let chunks = "";
 
   const AntSwitch = styled(Switch)(({ theme }) => ({
     width: 28,
@@ -106,14 +107,45 @@ const Chat = () => {
       const eventSource = new EventSource(`${BASE_URL}/stream`);
       eventSource.addEventListener("message", (event) => {
         const data = JSON.parse(event.data);
-        something += data.answer;
-        if (something !== "") {
+        chunks += data.answer;
+        if (chunks !== "") {
           setIsLoading(false);
         }
-        setStreamData(something);
+        setStreamData(chunks);
         setAnswers([...answers, [question, data]]);
       });
       const res = await chatApi(question, history, mode);
+      if (res) {
+        setStreamData("");
+        eventSource.close();
+      }
+      setHistory([...history, [question, res.answer]]);
+    } catch (e) {
+      setError(e);
+    }
+  };
+
+  const createStrawman = async () => {
+    const question = "Draw a strawman structure for the above conversation.";
+    lastQuestionRef.current = question;
+    let historyString = "";
+    history.forEach((element) => {
+      historyString += `\n\n\n User: ${element[0]} \n Bot: ${element[1]}`;
+    });
+    try {
+      const eventSource = new EventSource(`${BASE_URL}/strawman/stream`);
+      eventSource.addEventListener("message", (event) => {
+        const data = JSON.parse(event.data);
+        chunks += data.answer;
+        if (chunks !== "") {
+          setIsLoading(false);
+        }
+        setStreamData(chunks);
+        setAnswers([...answers, [question, data]]);
+      });
+      const res = await axios.post(`${BASE_URL}/strawman`, {
+        history: historyString,
+      });
       if (res) {
         setStreamData("");
         eventSource.close();
@@ -172,6 +204,11 @@ const Chat = () => {
   return (
     <div className={styles.container}>
       <div className={styles.commandsContainer}>
+        <Strawman
+          className={styles.commandButton}
+          disabled={answers.length === 0}
+          onClick={createStrawman}
+        />
         <ClearNamespace
           className={styles.commandButton}
           isModalOpen={isModalOpen}

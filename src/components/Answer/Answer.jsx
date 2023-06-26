@@ -6,7 +6,6 @@ import { BASE_URL } from "../../utils/config";
 import styles from "./Answer.module.css";
 
 import { AnswerIcon } from "./AnswerIcon";
-let marked = require("marked");
 
 export const Answer = ({
   answer,
@@ -38,14 +37,13 @@ export const Answer = ({
         <Stack horizontal horizontalAlign="space-between">
           <AnswerIcon />
           <div>
-            {/* <IconButton
+            <IconButton
               style={{ color: "black" }}
-              iconProps={{ iconName: "Lightbulb" }}
-              title="Show thought process"
-              ariaLabel="Show thought process"
-              onClick={() => onThoughtProcessClicked()}
-              disabled={!answer.thoughts}
-            /> */}
+              iconProps={{ iconName: "Copy" }}
+              title="Copy the answer"
+              ariaLabel="Copy the answer"
+              onClick={() => navigator.clipboard.writeText(answer.answer)}
+            />
             <IconButton
               style={{ color: "black" }}
               iconProps={{ iconName: "ClipboardList" }}
