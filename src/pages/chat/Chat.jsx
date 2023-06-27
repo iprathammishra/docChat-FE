@@ -1,4 +1,4 @@
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect, useContext } from "react";
 import { Panel, DefaultButton } from "@fluentui/react";
 import { SparkleFilled } from "@fluentui/react-icons";
 import styles from "./Chat.module.css";
@@ -20,6 +20,7 @@ import PromptsList from "../oneshot/PromptsList";
 import { ClearNamespace } from "../../components/ClearNamespace";
 import { useBoolean } from "@fluentui/react-hooks";
 import { BASE_URL } from "../../utils/config";
+import ContextData from "../../contexts/contextData";
 import axios from "axios";
 import { Strawman } from "../../components/Strawman/Strawman";
 
@@ -40,6 +41,7 @@ const Chat = () => {
   const [answers, setAnswers] = useState([]);
   const lastQuestionRef = useRef("");
   const chatMessageStreamEnd = useRef(null);
+  const { userId } = useContext(ContextData);
   let chunks = "";
 
   // const AntSwitch = styled(Switch)(({ theme }) => ({
@@ -109,7 +111,7 @@ const Chat = () => {
     setActiveAnalysisPanelTab(undefined);
 
     try {
-      const eventSource = new EventSource(`${BASE_URL}/stream`);
+      const eventSource = new EventSource(`${BASE_URL}/stream/${userId}`);
       eventSource.addEventListener("message", (event) => {
         const data = JSON.parse(event.data);
         chunks += data.answer;
@@ -119,7 +121,7 @@ const Chat = () => {
         setStreamData(chunks);
         setAnswers([...answers, [question, data]]);
       });
-      const res = await chatApi(question, history, mode);
+      const res = await chatApi(question, history, mode, userId);
       if (res) {
         setStreamData("");
         eventSource.close();
@@ -138,7 +140,9 @@ const Chat = () => {
       historyString += `\n\n\n User: ${element[0]} \n Bot: ${element[1]}`;
     });
     try {
-      const eventSource = new EventSource(`${BASE_URL}/strawman/stream`);
+      const eventSource = new EventSource(
+        `${BASE_URL}/strawman/stream/${userId}`
+      );
       eventSource.addEventListener("message", (event) => {
         const data = JSON.parse(event.data);
         chunks += data.answer;
@@ -150,6 +154,7 @@ const Chat = () => {
       });
       const res = await axios.post(`${BASE_URL}/strawman`, {
         history: historyString,
+        userId,
       });
       if (res) {
         setStreamData("");
