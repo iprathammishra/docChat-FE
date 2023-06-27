@@ -29,7 +29,7 @@
 }
 
 .chatEmptyStateTitle {
-  font-size: 4rem;
+  font-size: 2rem !important;
   font-weight: 600;
   margin-top: 0;
 }

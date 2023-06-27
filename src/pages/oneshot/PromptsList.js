@@ -86,7 +86,7 @@ const PromptsList = () => {
         />
       </div>
       {searched.map((example, i) => (
-        <div className={styles.promptContainer}>
+        <div key={i} className={styles.promptContainer}>
           <i
             style={{
               position: "absolute",
@@ -100,9 +100,7 @@ const PromptsList = () => {
             }}
             className="fa-regular fa-copy"
           ></i>
-          <div key={i} className={styles.prompt}>
-            {example.text}
-          </div>
+          <div className={styles.prompt}>{example.text}</div>
         </div>
       ))}
     </div>

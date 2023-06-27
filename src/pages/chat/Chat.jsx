@@ -42,58 +42,63 @@ const Chat = () => {
   const chatMessageStreamEnd = useRef(null);
   let chunks = "";
 
-  const AntSwitch = styled(Switch)(({ theme }) => ({
-    width: 28,
-    height: 16,
-    padding: 0,
-    display: "flex",
-    "&:active": {
-      "& .MuiSwitch-thumb": {
-        width: 15,
-      },
-      "& .MuiSwitch-switchBase.Mui-checked": {
-        transform: "translateX(9px)",
-      },
-    },
-    "& .MuiSwitch-switchBase": {
-      padding: 2,
-      "&.Mui-checked": {
-        transform: "translateX(12px)",
-        color: "#fff",
-        "& + .MuiSwitch-track": {
-          opacity: 1,
-          backgroundColor:
-            theme.palette.mode === "dark" ? "#177ddc" : "#1890ff",
-        },
-      },
-    },
-    "& .MuiSwitch-thumb": {
-      boxShadow: "0 2px 4px 0 rgb(0 35 11 / 20%)",
-      width: 12,
-      height: 12,
-      borderRadius: 6,
-      transition: theme.transitions.create(["width"], {
-        duration: 200,
-      }),
-    },
-    "& .MuiSwitch-track": {
-      borderRadius: 16 / 2,
-      opacity: 1,
-      backgroundColor:
-        theme.palette.mode === "dark"
-          ? "rgba(255,255,255,.35)"
-          : "rgba(0,0,0,.25)",
-      boxSizing: "border-box",
-    },
-  }));
+  // const AntSwitch = styled(Switch)(({ theme }) => ({
+  //   width: 28,
+  //   height: 16,
+  //   padding: 0,
+  //   display: "flex",
+  //   "&:active": {
+  //     "& .MuiSwitch-thumb": {
+  //       width: 15,
+  //     },
+  //     "& .MuiSwitch-switchBase.Mui-checked": {
+  //       transform: "translateX(9px)",
+  //     },
+  //   },
+  //   "& .MuiSwitch-switchBase": {
+  //     padding: 2,
+  //     "&.Mui-checked": {
+  //       transform: "translateX(12px)",
+  //       color: "#fff",
+  //       "& + .MuiSwitch-track": {
+  //         opacity: 1,
+  //         backgroundColor:
+  //           theme.palette.mode === "dark" ? "#177ddc" : "#1890ff",
+  //       },
+  //     },
+  //   },
+  //   "& .MuiSwitch-thumb": {
+  //     boxShadow: "0 2px 4px 0 rgb(0 35 11 / 20%)",
+  //     width: 12,
+  //     height: 12,
+  //     borderRadius: 6,
+  //     transition: theme.transitions.create(["width"], {
+  //       duration: 200,
+  //     }),
+  //   },
+  //   "& .MuiSwitch-track": {
+  //     borderRadius: 16 / 2,
+  //     opacity: 1,
+  //     backgroundColor:
+  //       theme.palette.mode === "dark"
+  //         ? "rgba(255,255,255,.35)"
+  //         : "rgba(0,0,0,.25)",
+  //     boxSizing: "border-box",
+  //   },
+  // }));
 
-  const handleChange = () => {
-    if (mode === "QnA") {
-      setMode("Generative");
-    } else {
-      setMode("QnA");
-    }
-  };
+  // const handleChange = () => {
+  //   if (mode === "QnA") {
+  //     setMode("Generative");
+  //   } else {
+  //     setMode("QnA");
+  //   }
+  // };
+
+  useEffect(
+    () => chatMessageStreamEnd.current?.scrollIntoView({ behavior: "smooth" }),
+    [streamData]
+  );
 
   const makeApiRequest = async (question, mode) => {
     lastQuestionRef.current = question;
@@ -171,11 +176,6 @@ const Chat = () => {
     if (response.status <= 299 || response.statusText === "OK") hideModal();
   };
 
-  useEffect(
-    () => chatMessageStreamEnd.current?.scrollIntoView({ behavior: "smooth" }),
-    [streamData]
-  );
-
   const onShowCitation = (citation, index) => {
     if (
       activeCitation === citation &&
@@ -236,7 +236,7 @@ const Chat = () => {
           {!lastQuestionRef.current ? (
             <div className={styles.chatEmptyState}>
               <SparkleFilled
-                fontSize={"120px"}
+                fontSize={"70px"}
                 primaryFill={"#1078e7"}
                 aria-hidden="true"
                 aria-label="Chat logo"
@@ -244,7 +244,7 @@ const Chat = () => {
               <h1 className={styles.chatEmptyStateTitle}>
                 Chat with your data
               </h1>
-              <Stack
+              {/* <Stack
                 sx={{ marginTop: "20px", transform: "scale(1.2)" }}
                 direction="row"
                 spacing={1}
@@ -257,7 +257,7 @@ const Chat = () => {
                   inputProps={{ "aria-label": "ant design" }}
                 />
                 <Typography>Generative</Typography>
-              </Stack>
+              </Stack> */}
             </div>
           ) : (
             <div className={styles.chatMessageStream}>
