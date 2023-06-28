@@ -11,8 +11,8 @@ export async function chatApi(question, history, mode, userId) {
   return parsedResponse;
 }
 
-export async function uploadFilesApi(formData) {
-  const response = await axios.post(`${BASE_URL}/upload`, formData);
+export async function uploadFilesApi(formData, userId) {
+  const response = await axios.post(`${BASE_URL}/upload/${userId}`, formData);
   return response.status;
 }
 
