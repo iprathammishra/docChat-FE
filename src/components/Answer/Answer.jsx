@@ -12,8 +12,10 @@ export const Answer = ({
   isSelected,
   onCitationClicked,
   onSupportingContentClicked,
+  onSuggestionClicked,
 }) => {
   const [citations, setCitatitons] = useState([]);
+  const [suggestions, setSuggestions] = useState([]);
 
   useEffect(() => {
     const tempArr = [];
@@ -27,6 +29,12 @@ export const Answer = ({
     });
     setCitatitons([...tempArr]);
   }, []);
+
+  useEffect(() => {
+    setSuggestions(
+      answer.questions.map((ques) => ques.substring(1, ques.length - 1))
+    );
+  }, [answer]);
 
   return (
     <Stack
@@ -50,7 +58,6 @@ export const Answer = ({
               title="Show supporting content"
               ariaLabel="Show supporting content"
               onClick={() => onSupportingContentClicked()}
-              // disabled={!answer.data_points.length}
             />
           </div>
         </Stack>
@@ -74,21 +81,43 @@ export const Answer = ({
             <span className={styles.citationLearnMore}>Citations:</span>
             {citations.map((x, i) => {
               const file = x[0].metadata.file;
-              {
-                /* const path = getCitationFilePath(file); */
-              }
               const src = `${BASE_URL}/docs/${file}`;
               return (
                 <a
                   key={i}
-                  target="_blank"
                   className={styles.citation}
                   title={x}
-                  // href={src}
                   onClick={() => onCitationClicked(src)}
                 >
                   {`${++i}. ${file}`}
                 </a>
+              );
+            })}
+          </Stack>
+        </Stack.Item>
+      )}
+
+      {suggestions.length !== 0 && (
+        <Stack.Item>
+          <Stack
+            className={styles.followupQuestionsList}
+            horizontal
+            wrap
+            tokens={{ childrenGap: 5 }}
+          >
+            <span className={styles.followupQuestionLearnMore}>
+              Suggestions:
+            </span>
+            {suggestions.map((x, i) => {
+              return (
+                <div
+                  key={i}
+                  className={styles.followupQuestion}
+                  title={x}
+                  onClick={() => onSuggestionClicked(x)}
+                >
+                  {`${++i}. ${x}`}
+                </div>
               );
             })}
           </Stack>

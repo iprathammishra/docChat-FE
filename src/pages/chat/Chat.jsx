@@ -99,7 +99,7 @@ const Chat = () => {
 
   useEffect(
     () => chatMessageStreamEnd.current?.scrollIntoView({ behavior: "smooth" }),
-    [streamData]
+    [isLoading, streamData]
   );
 
   const makeApiRequest = async (question, mode) => {
@@ -135,6 +135,7 @@ const Chat = () => {
   const createStrawman = async () => {
     const question = "Draw a strawman structure for the above conversation.";
     lastQuestionRef.current = question;
+    setIsLoading(true);
     let historyString = "";
     history.forEach((element) => {
       historyString += `\n\n\n User: ${element[0]} \n Bot: ${element[1]}`;
@@ -179,6 +180,10 @@ const Chat = () => {
     showModal();
     const response = await axios.get(`${BASE_URL}/delete?namespace=docs-pdf`);
     if (response.status <= 299 || response.statusText === "OK") hideModal();
+  };
+
+  const onSuggestionClicked = (askedQuestion) => {
+    makeApiRequest(askedQuestion, mode);
   };
 
   const onShowCitation = (citation, index) => {
@@ -278,6 +283,7 @@ const Chat = () => {
                         activeAnalysisPanelTab !== undefined
                       }
                       onCitationClicked={(c) => onShowCitation(c, index)}
+                      onSuggestionClicked={onSuggestionClicked}
                       onSupportingContentClicked={() =>
                         onToggleTab(
                           AnalysisPanelTabs.SupportingContentTab,

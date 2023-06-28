@@ -33,49 +33,35 @@
   outline: 2px solid #e5f1fd;
 }
 
-.citationLearnMore {
-  margin-right: 5px;
-  font-weight: 600;
-  line-height: 24px;
-}
-
-.citation {
-  font-weight: 500;
-  line-height: 24px;
-  text-align: center;
-  border-radius: 4px;
-  padding: 0px 8px;
-  background: #d9ecff;
-  color: #0048d7;
-  text-decoration: none;
-  cursor: pointer;
-}
-
-.citation:hover {
-  text-decoration: underline;
-}
-
-.followupQuestionsList {
-  margin-top: 10px;
-}
-
+.citationLearnMore,
 .followupQuestionLearnMore {
   margin-right: 5px;
   font-weight: 600;
   line-height: 24px;
 }
 
+.citation,
 .followupQuestion {
-  font-weight: 600;
-  line-height: 24px;
-  text-align: center;
+  font-weight: 500;
+  line-height: 17px;
   border-radius: 4px;
-  padding: 0px 8px;
-  background: #e8ebfa;
-  color: black;
-  font-style: italic;
+  padding: 5px 10px;
+  background: #d9ecff;
+  color: #0048d7;
   text-decoration: none;
   cursor: pointer;
+}
+
+.citation:hover,
+.followupQuestion:hover {
+  text-decoration: underline;
+}
+.citation {
+  text-align: center;
+}
+
+.followupQuestionsList {
+  margin-top: 15px;
 }
 
 .supContainer {
