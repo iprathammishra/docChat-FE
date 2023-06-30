@@ -1,10 +1,11 @@
-import React, { useRef, useState } from "react";
+import React, { useContext, useRef, useState } from "react";
 import { ArrowUpload24Regular } from "@fluentui/react-icons";
 import { Text } from "@fluentui/react";
 import { useId, useBoolean } from "@fluentui/react-hooks";
 import { getTheme, Modal } from "@fluentui/react";
 import { IconButton } from "@fluentui/react/lib/Button";
 import styles from "./Upload.module.css";
+import ContextData from "../../contexts/contextData";
 import { uploadFilesApi } from "../../api";
 
 const UploadButton = ({ className, selectedFiles, setSelectedFiles }) => {
@@ -12,6 +13,7 @@ const UploadButton = ({ className, selectedFiles, setSelectedFiles }) => {
   const [isModalOpen, { setTrue: showModal, setFalse: hideModal }] =
     useBoolean(false);
   const [active, setActive] = useState("local");
+  const { userId } = useContext(ContextData);
   const fileInputRef = useRef(null);
   const closeBtnRef = useRef(null);
 
@@ -23,7 +25,7 @@ const UploadButton = ({ className, selectedFiles, setSelectedFiles }) => {
     for (let i = 0; i < selectedFiles.length; i++) {
       formData.append("files", selectedFiles[i]);
     }
-    const status = await uploadFilesApi(formData);
+    const status = await uploadFilesApi(formData, userId);
     if (status <= 299) {
       setFilesLoaded(true);
       hideModal();

@@ -1,6 +1,7 @@
 import { useRef, useState, useEffect, useContext } from "react";
+import { v4 as uuidv4 } from "uuid";
 import { Panel, DefaultButton } from "@fluentui/react";
-import { SparkleFilled } from "@fluentui/react-icons";
+import { ArrowUp24Regular, SparkleFilled } from "@fluentui/react-icons";
 import styles from "./Chat.module.css";
 import { chatApi } from "../../api";
 import { Answer, AnswerError, AnswerLoading } from "../../components/Answer";
@@ -13,9 +14,6 @@ import {
 import { SettingsButton } from "../../components/SettingsButton";
 import { ClearChatButton } from "../../components/ClearChatButton";
 import UploadButton from "../../components/UploadButton/UploadButton";
-import { styled } from "@mui/material/styles";
-import { Switch, Typography } from "@mui/material";
-import Stack from "@mui/material/Stack";
 import PromptsList from "../oneshot/PromptsList";
 import { ClearNamespace } from "../../components/ClearNamespace";
 import { useBoolean } from "@fluentui/react-hooks";
@@ -24,13 +22,12 @@ import ContextData from "../../contexts/contextData";
 import axios from "axios";
 import { Strawman } from "../../components/Strawman/Strawman";
 
-const Chat = () => {
+const Chat = ({ navRef }) => {
   const [mode, setMode] = useState("QnA");
   const [isModalOpen, { setTrue: showModal, setFalse: hideModal }] =
     useBoolean(false);
   const [isConfigPanelOpen, setIsConfigPanelOpen] = useState(false);
   const [selectedFiles, setSelectedFiles] = useState([]);
-  const [history, setHistory] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState();
   const [streamData, setStreamData] = useState();
@@ -38,7 +35,7 @@ const Chat = () => {
   const [activeAnalysisPanelTab, setActiveAnalysisPanelTab] =
     useState(undefined);
   const [selectedAnswer, setSelectedAnswer] = useState(0);
-  const [answers, setAnswers] = useState([]);
+  const [answers, setAnswers] = useState({ chat: [] });
   const lastQuestionRef = useRef("");
   const chatMessageStreamEnd = useRef(null);
   const { userId } = useContext(ContextData);
@@ -105,6 +102,10 @@ const Chat = () => {
   const makeApiRequest = async (question, mode) => {
     lastQuestionRef.current = question;
 
+    if (answers.chat.length === 0) {
+      answers["id"] = uuidv4();
+    }
+
     error && setError(undefined);
     setIsLoading(true);
     setActiveCitation(undefined);
@@ -119,14 +120,15 @@ const Chat = () => {
           setIsLoading(false);
         }
         setStreamData(chunks);
-        setAnswers([...answers, [question, data]]);
+        let conversation = answers.chat;
+        conversation = [...conversation, { user: question, data }];
+        setAnswers({ ...answers, chat: conversation });
       });
-      const res = await chatApi(question, history, mode, userId);
+      const res = await chatApi(question, answers, mode, userId);
       if (res) {
         setStreamData("");
         eventSource.close();
       }
-      setHistory([...history, [question, res.answer]]);
     } catch (e) {
       setError(e);
     }
@@ -136,10 +138,7 @@ const Chat = () => {
     const question = "Draw a strawman structure for the above conversation.";
     lastQuestionRef.current = question;
     setIsLoading(true);
-    let historyString = "";
-    history.forEach((element) => {
-      historyString += `\n\n\n User: ${element[0]} \n Bot: ${element[1]}`;
-    });
+
     try {
       const eventSource = new EventSource(
         `${BASE_URL}/strawman/stream/${userId}`
@@ -151,17 +150,19 @@ const Chat = () => {
           setIsLoading(false);
         }
         setStreamData(chunks);
-        setAnswers([...answers, [question, data]]);
+        let conversation = answers.chat;
+        conversation = [...conversation, { user: question, data }];
+        setAnswers({ ...answers, chat: conversation });
       });
       const res = await axios.post(`${BASE_URL}/strawman`, {
-        history: historyString,
+        question,
+        answers,
         userId,
       });
       if (res) {
         setStreamData("");
         eventSource.close();
       }
-      setHistory([...history, [question, res.answer]]);
     } catch (e) {
       setError(e);
     }
@@ -172,8 +173,7 @@ const Chat = () => {
     error && setError(undefined);
     setActiveCitation(undefined);
     setActiveAnalysisPanelTab(undefined);
-    setAnswers([]);
-    setHistory([]);
+    setAnswers({ chat: [] });
   };
 
   const clearDocs = async () => {
@@ -213,10 +213,16 @@ const Chat = () => {
 
   return (
     <div className={styles.container}>
+      <div
+        onClick={() => navRef.current?.scrollIntoView({ behavior: "smooth" })}
+        className={styles.goToTopBtn}
+      >
+        <ArrowUp24Regular />
+      </div>
       <div className={styles.commandsContainer}>
         <Strawman
           className={styles.commandButton}
-          disabled={answers.length === 0}
+          disabled={answers.chat.length === 0}
           onClick={createStrawman}
         />
         <ClearNamespace
@@ -271,13 +277,13 @@ const Chat = () => {
             </div>
           ) : (
             <div className={styles.chatMessageStream}>
-              {answers.map((answer, index) => (
+              {answers.chat.map((answer, index) => (
                 <div key={index}>
-                  <UserChatMessage message={answer[0]} />
+                  <UserChatMessage message={answer.user} />
                   <div className={styles.chatMessageGpt}>
                     <Answer
                       key={index}
-                      answer={answer[1]}
+                      answer={answer.data}
                       isSelected={
                         selectedAnswer === index &&
                         activeAnalysisPanelTab !== undefined
@@ -329,13 +335,13 @@ const Chat = () => {
           </div>
         </div>
 
-        {answers.length > 0 && activeAnalysisPanelTab && (
+        {answers.chat.length > 0 && activeAnalysisPanelTab && (
           <AnalysisPanel
             className={styles.chatAnalysisPanel}
             activeCitation={activeCitation}
             onActiveTabChanged={(x) => onToggleTab(x, selectedAnswer)}
             citationHeight="810px"
-            answer={answers[selectedAnswer][1]}
+            answer={answers.chat[selectedAnswer].data}
             activeTab={activeAnalysisPanelTab}
           />
         )}

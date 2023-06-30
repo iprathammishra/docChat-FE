@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useRef } from "react";
 import ReactDOM from "react-dom/client";
 import {
   Routes,
@@ -25,6 +25,7 @@ initializeIcons();
 
 export default function App() {
   const { setUser, userId } = useContext(ContextData);
+  const navRef = useRef(null);
 
   useEffect(() => {
     if (userId) {
@@ -42,11 +43,12 @@ export default function App() {
     <>
       {userId ? (
         <Router>
+          <div ref={navRef} />
           <Navbar />
           <Routes>
             <Route path="/linkedin" element={<Linkedin />} />
             <Route path="/" element={<Layout />}>
-              <Route path="/" element={<Chat />} />{" "}
+              <Route path="/" element={<Chat navRef={navRef} />} />{" "}
               {/* use 'path' instead of 'index' */}
               <Route path="qa" element={<OneShot />} />
               <Route path="*" element={<NoPage />} />
