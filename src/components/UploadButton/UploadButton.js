@@ -13,24 +13,30 @@ const UploadButton = ({ className, selectedFiles, setSelectedFiles }) => {
   const [isModalOpen, { setTrue: showModal, setFalse: hideModal }] =
     useBoolean(false);
   const [active, setActive] = useState("local");
+  const [company, setCompany] = useState("");
   const { userId } = useContext(ContextData);
   const fileInputRef = useRef(null);
+  const formRef = useRef(null);
   const closeBtnRef = useRef(null);
 
   const titleId = useId("title");
 
-  const handleFilesUpload = async () => {
+  const handleFilesUpload = async (e) => {
+    e.preventDefault();
     setFilesLoaded(false);
-    let formData = new FormData();
+    let formData = new FormData(formRef.current);
     for (let i = 0; i < selectedFiles.length; i++) {
       formData.append("files", selectedFiles[i]);
     }
-    const status = await uploadFilesApi(formData, userId);
+
+    const status = await uploadFilesApi(formData, company, userId);
     if (status <= 299) {
       setFilesLoaded(true);
       hideModal();
       setSelectedFiles([]);
     }
+
+    setCompany("");
   };
 
   const handleFileInputChange = (event) => {
@@ -72,21 +78,28 @@ const UploadButton = ({ className, selectedFiles, setSelectedFiles }) => {
           >
             Local Files
           </p>
-          <p
-            onClick={() => setActive("onedrive")}
-            className={active === "onedrive" ? `${styles.active}` : ""}
-          >
-            OneDrive
-          </p>
         </div>
         <hr />
-        <div className={styles.upload_section}>
-          <button
+        {/* <div> */}
+        <form
+          ref={formRef}
+          onSubmit={handleFilesUpload}
+          className={styles.upload_section}
+        >
+          <input
+            type="text"
+            name="company"
+            value={company}
+            placeholder="Company's name..."
+            onChange={(e) => setCompany(e.target.value)}
+            className={styles.company_input}
+          />
+          <div
             className={styles.browse_btn}
             onClick={() => fileInputRef.current.click()}
           >
             Browse
-          </button>
+          </div>
           <input
             ref={fileInputRef}
             onChange={handleFileInputChange}
@@ -113,12 +126,13 @@ const UploadButton = ({ className, selectedFiles, setSelectedFiles }) => {
               </div>
             </button>
           )}
-          {selectedFiles.length !== 0 && filesLoaded && (
-            <button onClick={handleFilesUpload} className={styles.submit_btn}>
+          {selectedFiles.length !== 0 && filesLoaded && company && (
+            <button type="submit" className={styles.submit_btn}>
               Submit
             </button>
           )}
-        </div>
+        </form>
+        {/* </div> */}
       </Modal>
     </div>
   );

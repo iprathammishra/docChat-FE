@@ -1,75 +1,56 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
+import { Copy20Regular, Delete20Regular } from "@fluentui/react-icons";
+import ContextData from "../../contexts/contextData";
 import styles from "./OneShot.module.css";
-
-const EXAMPLES = [
-  {
-    text: "Can you list down and elaborate on tasks given in specific scope of services?",
-    type: "PR",
-  },
-  {
-    text: "Can you provide a detailed summary of the RFP for marketing for NYCEDC properties with proper headings and subheadings?",
-    type: "PR",
-  },
-  {
-    text: "What is the deadline for proposal submission?",
-    type: "PR",
-  },
-  {
-    text: "What is the deadline for asking clarification questions?",
-    type: "PR",
-  },
-  {
-    text: "What is the process for asking these questions? Is it via an email or website/procurement portal?",
-    type: "PR",
-  },
-  {
-    text: "Is there a pre-proposal or pre-bid meeting? Is it being held in-person / on-site? What date and time? Is a meeting link available?",
-    type: "PR",
-  },
-  {
-    text: "List the services / deliverables / scope of work.",
-    type: "PR",
-  },
-  {
-    text: "Does the RFP mention any availability of budgets or limits on budgets?",
-    type: "About Us",
-  },
-  {
-    text: "What are the qualification criteria for agencies bidding, applying or responding to this RFP?",
-    type: "Content",
-  },
-  {
-    text: "Is there an Earnest Money Deposit or RFP Processing Fee required?",
-    type: "Content",
-  },
-  {
-    text: "Is there a format for technical or financial proposal that the bidders need to follow?",
-    type: "Content",
-  },
-  {
-    text: "What are the objectives or goals or aims of this RFP?",
-    type: "Content",
-  },
-  {
-    text: "Is there a list of supporting documents that the agency should submit along with the technical or financial proposal?",
-    type: "Content",
-  },
-];
+import { addPromptApi, deletePromptApi, fetchPromptsApi } from "../../api/api";
 
 const PromptsList = () => {
   const [search, setSearch] = useState("");
-  const [filtered, setFiltered] = useState(EXAMPLES);
-  const [searched, setSearched] = useState(filtered);
+  const [prompt, setPrompt] = useState("");
+  const [prompts, setPrompts] = useState([]);
+  const [searched, setSearched] = useState([]);
+  const { userId, user } = useContext(ContextData);
 
   useEffect(() => {
-    if (search === "") setSearched([...filtered]);
+    fetchAllPrompts();
+  }, []);
+
+  const fetchAllPrompts = async () => {
+    const fetchedPrompts = await fetchPromptsApi();
+    setPrompts(fetchedPrompts);
+  };
+
+  useEffect(() => {
+    if (search === "") setSearched([...prompts]);
     else {
-      const searchedPrompts = filtered.filter((prompt) =>
-        prompt.text.toLowerCase().includes(search.toLowerCase())
+      const searchedPrompts = prompts.filter(
+        (prompt) =>
+          prompt.prompt.toLowerCase().includes(search.toLowerCase()) ||
+          prompt.createdBy.name.toLowerCase().includes(search.toLowerCase())
       );
       setSearched([...searchedPrompts]);
     }
-  }, [search, filtered]);
+  }, [search, prompts]);
+
+  const addPrompt = async (e) => {
+    e.preventDefault();
+    const newPrompt = {
+      prompt,
+      createdBy: {
+        name: user.name,
+        id: userId,
+      },
+    };
+    await addPromptApi(newPrompt);
+    setPrompts([newPrompt, ...prompts]);
+    setPrompt("");
+  };
+
+  const deletePrompt = async (id) => {
+    await deletePromptApi(id);
+    const updatedPrompts = prompts.filter((prompt) => prompt._id !== id);
+    setPrompts(updatedPrompts);
+  };
 
   const handleSearch = (e) => {
     setSearch(e.target.value);
@@ -77,6 +58,17 @@ const PromptsList = () => {
 
   return (
     <div className={styles.promptList}>
+      <form onSubmit={addPrompt} className={styles.prompt_form}>
+        <textarea
+          placeholder="Write your prompt here..."
+          name="prompt"
+          className={styles.prompt_textarea}
+          value={prompt}
+          onChange={(e) => setPrompt(e.target.value)}
+          required
+        ></textarea>
+        <input type="submit" className={styles.add_btn} value="Add Prompt +" />
+      </form>
       <div className={styles.filterContainer}>
         <input
           value={search}
@@ -87,20 +79,29 @@ const PromptsList = () => {
       </div>
       {searched.map((example, i) => (
         <div key={i} className={styles.promptContainer}>
-          <i
+          <Copy20Regular
             style={{
               position: "absolute",
-              right: "10px",
-              top: "10px",
+              right: "5px",
+              top: "5px",
               color: "grey",
               cursor: "pointer",
             }}
-            onClick={async () => {
-              await navigator.clipboard.writeText(example.text);
-            }}
-            className="fa-regular fa-copy"
-          ></i>
-          <div className={styles.prompt}>{example.text}</div>
+          />
+          {userId === example.createdBy.id && (
+            <Delete20Regular
+              style={{
+                position: "absolute",
+                right: "27px",
+                top: "5px",
+                color: "grey",
+                cursor: "pointer",
+              }}
+              onClick={() => deletePrompt(example._id)}
+            />
+          )}
+          <div className={styles.prompt}>{example.prompt}</div>
+          <div className={styles.prompt_by}>{example.createdBy.name}</div>
         </div>
       ))}
     </div>

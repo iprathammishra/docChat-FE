@@ -11,8 +11,37 @@ export async function chatApi(question, history, mode, userId) {
   return parsedResponse;
 }
 
-export async function uploadFilesApi(formData, userId) {
-  const response = await axios.post(`${BASE_URL}/upload/${userId}`, formData);
+export async function fetchPromptsApi() {
+  const response = await axios.get(`${BASE_URL}/prompt/getAll`);
+  const parsedResponse = await response.data;
+  if (response.status > 299) {
+    throw Error(parsedResponse.error || "Unknown error");
+  }
+  return parsedResponse;
+}
+
+export async function addPromptApi(body) {
+  const response = await axios.post(`${BASE_URL}/prompt/add`, body);
+  const parsedResponse = await response.data;
+  if (response.status > 299) {
+    throw Error(parsedResponse.error || "Unknown error");
+  }
+  return parsedResponse;
+}
+
+export async function deletePromptApi(id) {
+  const response = await axios.delete(`${BASE_URL}/prompt/delete/${id}`);
+  const parsedResponse = await response.data;
+  if (response.status > 299) {
+    throw Error(parsedResponse.error || "Unknown error");
+  }
+  return parsedResponse;
+}
+
+export async function uploadFilesApi(formData, company, userId) {
+  const response = await axios.post(`${BASE_URL}/upload/${userId}`, formData, {
+    data: { company },
+  });
   return response.status;
 }
 
