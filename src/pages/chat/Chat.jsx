@@ -22,7 +22,7 @@ import ContextData from "../../contexts/contextData";
 import axios from "axios";
 import { Strawman } from "../../components/Strawman/Strawman";
 
-const Chat = ({ navRef }) => {
+const Chat = ({ navRef, isVisible }) => {
   const [mode, setMode] = useState("QnA");
   const [isModalOpen, { setTrue: showModal, setFalse: hideModal }] =
     useBoolean(false);
@@ -123,11 +123,13 @@ const Chat = ({ navRef }) => {
         let conversation = answers.chat;
         conversation = [...conversation, { user: question, data }];
         setAnswers({ ...answers, chat: conversation });
+        if (data.done) {
+          eventSource.close();
+        }
       });
       const res = await chatApi(question, answers, mode, userId);
       if (res) {
         setStreamData("");
-        eventSource.close();
       }
     } catch (e) {
       setError(e);
@@ -153,6 +155,9 @@ const Chat = ({ navRef }) => {
         let conversation = answers.chat;
         conversation = [...conversation, { user: question, data }];
         setAnswers({ ...answers, chat: conversation });
+        if (data.done) {
+          eventSource.close();
+        }
       });
       const res = await axios.post(`${BASE_URL}/strawman`, {
         question,
@@ -161,7 +166,6 @@ const Chat = ({ navRef }) => {
       });
       if (res) {
         setStreamData("");
-        eventSource.close();
       }
     } catch (e) {
       setError(e);
@@ -213,12 +217,14 @@ const Chat = ({ navRef }) => {
 
   return (
     <div className={styles.container}>
-      <div
-        onClick={() => navRef.current?.scrollIntoView({ behavior: "smooth" })}
-        className={styles.goToTopBtn}
-      >
-        <ArrowUp24Regular />
-      </div>
+      {isVisible && (
+        <div
+          onClick={() => navRef.current?.scrollIntoView({ behavior: "smooth" })}
+          className={styles.goToTopBtn}
+        >
+          <ArrowUp24Regular />
+        </div>
+      )}
       <div className={styles.commandsContainer}>
         <Strawman
           className={styles.commandButton}

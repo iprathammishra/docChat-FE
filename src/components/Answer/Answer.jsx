@@ -18,7 +18,6 @@ export const Answer = ({
   const [suggestions, setSuggestions] = useState([]);
 
   useEffect(() => {
-    console.log(answer);
     const tempArr = [];
     const set = new Set();
     answer.citations.filter((citation) => {

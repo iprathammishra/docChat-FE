@@ -18,9 +18,6 @@ const Navbar = () => {
         <NavLink to="/">
           <p className="nav-item nav-chat">Chat</p>
         </NavLink>
-        {/* <NavLink to="/linkedin">
-          <p className="nav-item nav-linkedin">LinkedIn Connections</p>
-        </NavLink> */}
         <i
           title="Log Out"
           style={{ color: "white", cursor: "pointer" }}

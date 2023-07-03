@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import ReactDOM from "react-dom/client";
 import {
   Routes,
@@ -26,6 +26,26 @@ initializeIcons();
 export default function App() {
   const { setUser, userId } = useContext(ContextData);
   const navRef = useRef(null);
+  const [isVisible, setIsVisible] = useState(true);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsVisible(!entry.isIntersecting);
+      },
+      { threshold: 0 } // Adjust the threshold value if needed
+    );
+
+    if (navRef.current) {
+      observer.observe(navRef.current);
+    }
+
+    return () => {
+      if (navRef.current) {
+        observer.unobserve(navRef.current);
+      }
+    };
+  }, []);
 
   useEffect(() => {
     if (userId) {
@@ -48,7 +68,10 @@ export default function App() {
           <Routes>
             <Route path="/linkedin" element={<Linkedin />} />
             <Route path="/" element={<Layout />}>
-              <Route path="/" element={<Chat navRef={navRef} />} />{" "}
+              <Route
+                path="/"
+                element={<Chat navRef={navRef} isVisible={isVisible} />}
+              />{" "}
               {/* use 'path' instead of 'index' */}
               <Route path="qa" element={<OneShot />} />
               <Route path="*" element={<NoPage />} />
