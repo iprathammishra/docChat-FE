@@ -87,6 +87,9 @@ const PromptsList = () => {
               color: "grey",
               cursor: "pointer",
             }}
+            onClick={async () => {
+              await navigator.clipboard.writeText(example.prompt);
+            }}
           />
           {userId === example.createdBy.id && (
             <Delete20Regular
