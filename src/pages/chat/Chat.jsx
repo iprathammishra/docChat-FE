@@ -182,7 +182,7 @@ const Chat = ({ navRef, isVisible }) => {
 
   const clearDocs = async () => {
     showModal();
-    const response = await axios.get(`${BASE_URL}/delete?namespace=docs-pdf`);
+    const response = await axios.get(`${BASE_URL}/delete?namespace=${userId}`);
     if (response.status <= 299 || response.statusText === "OK") hideModal();
   };
 
