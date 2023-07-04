@@ -5,6 +5,10 @@
   margin-top: 20px;
 }
 
+.chatMessageStream::-webkit-scrollbar {
+  width: 0;
+}
+
 .goToTopBtn {
   cursor: pointer;
   position: fixed;

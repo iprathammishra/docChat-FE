@@ -263,23 +263,7 @@ const Chat = ({ navRef, isVisible }) => {
                 aria-hidden="true"
                 aria-label="Chat logo"
               />
-              <h1 className={styles.chatEmptyStateTitle}>
-                Chat with your data
-              </h1>
-              {/* <Stack
-                sx={{ marginTop: "20px", transform: "scale(1.2)" }}
-                direction="row"
-                spacing={1}
-                alignItems="center"
-              >
-                <Typography>Q&A</Typography>
-                <AntSwitch
-                  onChange={handleChange}
-                  checked={mode === "Generative"}
-                  inputProps={{ "aria-label": "ant design" }}
-                />
-                <Typography>Generative</Typography>
-              </Stack> */}
+              <h1 className={styles.chatEmptyStateTitle}>Chat with your RFP</h1>
             </div>
           ) : (
             <div className={styles.chatMessageStream}>
