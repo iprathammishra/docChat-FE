@@ -10,10 +10,10 @@ import {
   AnalysisPanel,
   AnalysisPanelTabs,
 } from "../../components/AnalysisPanel";
-import { SettingsButton } from "../../components/SettingsButton";
+import { PanelButton } from "../../components/PanelButton";
 import { NewChatButton } from "../../components/NewChatButton";
 import UploadButton from "../../components/UploadButton/UploadButton";
-import PromptsList from "../oneshot/PromptsList";
+import PromptsList from "../../components/PromptsList/PromptsList";
 import { ClearNamespace } from "../../components/ClearNamespace";
 import { useBoolean } from "@fluentui/react-hooks";
 import { BASE_URL } from "../../utils/config";
@@ -150,6 +150,7 @@ const Chat = ({ navRef, isVisible }) => {
       }
     } catch (e) {
       setError(e);
+      setIsLoading(false);
     }
   };
 
@@ -280,7 +281,7 @@ const Chat = ({ navRef, isVisible }) => {
           onClick={newChat}
           disabled={!lastQuestionRef.current || isLoading}
         />
-        <SettingsButton
+        <PanelButton
           className={styles.commandButton}
           onClick={() => setIsConfigPanelOpen(!isConfigPanelOpen)}
         />
@@ -336,9 +337,9 @@ const Chat = ({ navRef, isVisible }) => {
                   <div className={styles.chatMessageGptMinWidth}>
                     <AnswerError
                       error={error.toString()}
-                      // onRetry={() =>
-                      //   makeApiRequest(lastQuestionRef.current, mode)
-                      // }
+                      onRetry={() =>
+                        makeApiRequest(lastQuestionRef.current, mode)
+                      }
                     />
                   </div>
                 </>

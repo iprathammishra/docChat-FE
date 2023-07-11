@@ -1,9 +1,9 @@
 // import { Text } from "@fluentui/react";
 import { PanelRight24Regular } from "@fluentui/react-icons";
 
-import styles from "./SettingsButton.module.css";
+import styles from "./PanelButton.module.css";
 
-export const SettingsButton = ({ className, onClick }) => {
+export const PanelButton = ({ className, onClick }) => {
   return (
     <div className={`${styles.container} ${className ?? ""}`} onClick={onClick}>
       <PanelRight24Regular />

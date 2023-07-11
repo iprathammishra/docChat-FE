@@ -19,7 +19,7 @@ export const AnswerError = ({ error, onRetry }) => {
       <PrimaryButton
         className={styles.retryButton}
         onClick={onRetry}
-        text="Retry"
+        text="Regenerate Response"
       />
     </Stack>
   );

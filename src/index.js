@@ -13,7 +13,6 @@ import ContextData from "./contexts/contextData";
 import Login from "./pages/Auth/Login";
 import Signup from "./pages/Auth/Signup";
 import NoPage from "./pages/NoPage";
-import OneShot from "./pages/oneshot/OneShot";
 import Chat from "./pages/chat/Chat";
 import Navbar from "./components/Navbar";
 import axios from "axios";
@@ -70,8 +69,6 @@ export default function App() {
                 path="/"
                 element={<Chat navRef={navRef} isVisible={isVisible} />}
               />{" "}
-              {/* use 'path' instead of 'index' */}
-              <Route path="qa" element={<OneShot />} />
               <Route path="*" element={<NoPage />} />
             </Route>
           </Routes>

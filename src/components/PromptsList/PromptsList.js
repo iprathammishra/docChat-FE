@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Copy20Regular, Delete20Regular } from "@fluentui/react-icons";
 import ContextData from "../../contexts/contextData";
-import styles from "./OneShot.module.css";
+import styles from "./PromptsList.module.css";
 import { addPromptApi, deletePromptApi, fetchPromptsApi } from "../../api/api";
 
 const PromptsList = () => {
