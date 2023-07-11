@@ -16,12 +16,11 @@ export const Answer = ({
 }) => {
   const [citations, setCitatitons] = useState([]);
   const [suggestions, setSuggestions] = useState([]);
-  console.log(answer);
 
   useEffect(() => {
     const tempArr = [];
     const set = new Set();
-    answer.citations.filter((citation) => {
+    answer.citations.forEach((citation) => {
       const file = citation[0].metadata.file;
       if (!set.has(file)) {
         tempArr.push(citation);

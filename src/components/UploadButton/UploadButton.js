@@ -23,7 +23,6 @@ const UploadButton = ({
   const fileInputRef = useRef(null);
   const formRef = useRef(null);
   const closeBtnRef = useRef(null);
-
   const titleId = useId("title");
 
   const handleFilesUpload = async (e) => {
@@ -35,6 +34,7 @@ const UploadButton = ({
     }
 
     const status = await uploadFilesApi(formData, companyInput, userId);
+    
     if (status <= 299) {
       setFilesLoaded(true);
       hideModal();

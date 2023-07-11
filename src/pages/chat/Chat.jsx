@@ -12,7 +12,7 @@ import {
   AnalysisPanelTabs,
 } from "../../components/AnalysisPanel";
 import { SettingsButton } from "../../components/SettingsButton";
-import { ClearChatButton } from "../../components/ClearChatButton";
+import { NewChatButton } from "../../components/NewChatButton";
 import UploadButton from "../../components/UploadButton/UploadButton";
 import PromptsList from "../oneshot/PromptsList";
 import { ClearNamespace } from "../../components/ClearNamespace";
@@ -114,8 +114,6 @@ const Chat = ({ navRef, isVisible }) => {
   };
 
   const makeApiRequest = async (question, mode) => {
-    lastQuestionRef.current = question;
-
     if (!company) {
       setAlertMessage(
         "You haven't uploaded any files or you can chat with older files!"
@@ -123,6 +121,8 @@ const Chat = ({ navRef, isVisible }) => {
       showErrorAlert();
       return;
     }
+
+    lastQuestionRef.current = question;
 
     if (answers.chat.length === 0) {
       answers["id"] = uuidv4();
@@ -149,7 +149,7 @@ const Chat = ({ navRef, isVisible }) => {
           eventSource.close();
         }
       });
-      const res = await chatApi(question, answers, mode, userId, company);
+      const res = await chatApi(question, answers.id, mode, userId, company);
       if (res) {
         setStreamData("");
       }
@@ -194,11 +194,12 @@ const Chat = ({ navRef, isVisible }) => {
     }
   };
 
-  const clearChat = () => {
+  const newChat = () => {
     lastQuestionRef.current = "";
     error && setError(undefined);
     setActiveCitation(undefined);
     setActiveAnalysisPanelTab(undefined);
+    setCompany("");
     setAnswers({ chat: [] });
   };
 
@@ -266,16 +267,16 @@ const Chat = ({ navRef, isVisible }) => {
           hideModal={hideModal}
           onClick={clearDocs}
         />
-        <ClearChatButton
-          className={styles.commandButton}
-          onClick={clearChat}
-          disabled={!lastQuestionRef.current || isLoading}
-        />
         <UploadButton
           selectedFiles={selectedFiles}
           setSelectedFiles={setSelectedFiles}
           className={styles.commandButton}
           setCompany={setCompany}
+        />
+        <NewChatButton
+          className={styles.commandButton}
+          onClick={newChat}
+          disabled={!lastQuestionRef.current || isLoading}
         />
         <SettingsButton
           className={styles.commandButton}
