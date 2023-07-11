@@ -6,6 +6,7 @@ import { getTheme, Modal } from "@fluentui/react";
 import { IconButton } from "@fluentui/react/lib/Button";
 import styles from "./Upload.module.css";
 import ContextData from "../../contexts/contextData";
+import { v4 as uuidv4 } from "uuid";
 import { uploadFilesApi } from "../../api";
 
 const UploadButton = ({
@@ -13,6 +14,7 @@ const UploadButton = ({
   selectedFiles,
   setSelectedFiles,
   setCompany,
+  answers,
 }) => {
   const [filesLoaded, setFilesLoaded] = useState(true);
   const [isModalOpen, { setTrue: showModal, setFalse: hideModal }] =
@@ -27,14 +29,23 @@ const UploadButton = ({
 
   const handleFilesUpload = async (e) => {
     e.preventDefault();
+
+    if (answers.chat.length === 0) {
+      answers["id"] = uuidv4();
+    }
     setFilesLoaded(false);
+
     let formData = new FormData(formRef.current);
     for (let i = 0; i < selectedFiles.length; i++) {
       formData.append("files", selectedFiles[i]);
     }
+    formData.append("chatId", answers.id);
 
-    const status = await uploadFilesApi(formData, companyInput, userId);
-    
+    const status = await uploadFilesApi(
+      formData,
+      userId
+    );
+
     if (status <= 299) {
       setFilesLoaded(true);
       hideModal();

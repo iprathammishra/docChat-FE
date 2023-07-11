@@ -6,6 +6,7 @@ import axios from "axios";
 
 const OldChats = ({ userId, setAnswers, lastQuestionRef, setCompany }) => {
   const [oldChats, setOldChats] = useState([]);
+  const [selectedChat, setSelectedChat] = useState();
 
   useEffect(() => {
     fetchChats();
@@ -17,21 +18,22 @@ const OldChats = ({ userId, setAnswers, lastQuestionRef, setCompany }) => {
   };
 
   const handleChatClick = (i) => {
+    setSelectedChat(i);
     const chat = oldChats[i];
     const conversation = chat.chat;
     const obj = {
-      id: chat._id,
+      id: chat.chatId,
       chat: conversation,
     };
     const chatLength = conversation.length;
-    lastQuestionRef.current = conversation[chatLength - 1].user;
+    lastQuestionRef.current = conversation[chatLength - 1]?.user;
     setAnswers({ ...obj });
     setCompany(chat.name);
   };
 
   const deleteChat = async (e, id) => {
     e.stopPropagation();
-    setOldChats(oldChats.filter((chat) => chat._id !== id));
+    setOldChats(oldChats.filter((chat) => chat.chatId !== id));
     await axios.put(`${BASE_URL}/chat/delete/${id}`);
   };
 
@@ -42,10 +44,14 @@ const OldChats = ({ userId, setAnswers, lastQuestionRef, setCompany }) => {
           <div
             onClick={() => handleChatClick(i)}
             key={i}
-            className={styles.chatContainer}
+            className={
+              selectedChat !== i
+                ? `${styles.chatContainer}`
+                : `${styles.chatContainer} ${styles.selectedChat}`
+            }
           >
             <div className={styles.chat}>{chat.name}</div>
-            <Delete20Regular onClick={(e) => deleteChat(e, chat._id)} />
+            <Delete20Regular onClick={(e) => deleteChat(e, chat.chatId)} />
           </div>
         ))
       ) : (

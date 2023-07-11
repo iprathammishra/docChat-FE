@@ -1,5 +1,4 @@
 import { useRef, useState, useEffect, useContext } from "react";
-import { v4 as uuidv4 } from "uuid";
 import { Panel, DefaultButton } from "@fluentui/react";
 import { ArrowUp24Regular, SparkleFilled } from "@fluentui/react-icons";
 import styles from "./Chat.module.css";
@@ -124,10 +123,6 @@ const Chat = ({ navRef, isVisible }) => {
 
     lastQuestionRef.current = question;
 
-    if (answers.chat.length === 0) {
-      answers["id"] = uuidv4();
-    }
-
     error && setError(undefined);
     setIsLoading(true);
     setActiveCitation(undefined);
@@ -149,7 +144,7 @@ const Chat = ({ navRef, isVisible }) => {
           eventSource.close();
         }
       });
-      const res = await chatApi(question, answers.id, mode, userId, company);
+      const res = await chatApi(question, answers.id, mode, userId);
       if (res) {
         setStreamData("");
       }
@@ -162,6 +157,11 @@ const Chat = ({ navRef, isVisible }) => {
     const question = "Draw a strawman structure for the above conversation.";
     lastQuestionRef.current = question;
     setIsLoading(true);
+
+    let historyString = "";
+    answers.chat.forEach((element) => {
+      historyString += `\n\n\n User: ${element.user} \n Bot: ${element.bot.answer}`;
+    });
 
     try {
       const eventSource = new EventSource(
@@ -183,8 +183,9 @@ const Chat = ({ navRef, isVisible }) => {
       });
       const res = await axios.post(`${BASE_URL}/strawman`, {
         question,
-        answers,
+        historyString,
         userId,
+        chatId: answers.id,
       });
       if (res) {
         setStreamData("");
@@ -210,7 +211,7 @@ const Chat = ({ navRef, isVisible }) => {
     } else {
       showModal();
       const response = await axios.get(
-        `${BASE_URL}/delete?namespace=${company}_${userId}`
+        `${BASE_URL}/delete?namespace=${answers.id}`
       );
       if (response.status <= 299 || response.statusText === "OK") hideModal();
     }
@@ -272,6 +273,7 @@ const Chat = ({ navRef, isVisible }) => {
           setSelectedFiles={setSelectedFiles}
           className={styles.commandButton}
           setCompany={setCompany}
+          answers={answers}
         />
         <NewChatButton
           className={styles.commandButton}

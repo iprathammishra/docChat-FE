@@ -1,8 +1,8 @@
 import axios from "axios";
 import { BASE_URL } from "../utils/config";
 
-export async function chatApi(question, chatId, mode, userId, company) {
-  const body = { question, chatId, userId, company };
+export async function chatApi(question, chatId, mode, userId) {
+  const body = { question, chatId, userId };
   const response = await axios.post(`${BASE_URL}/query${mode}`, body);
   const parsedResponse = await response.data;
   if (response.status > 299) {
@@ -38,10 +38,8 @@ export async function deletePromptApi(id) {
   return parsedResponse;
 }
 
-export async function uploadFilesApi(formData, company, userId) {
-  const response = await axios.post(`${BASE_URL}/upload/${userId}`, formData, {
-    data: { company },
-  });
+export async function uploadFilesApi(formData, userId) {
+  const response = await axios.post(`${BASE_URL}/upload/${userId}`, formData);
   return response.status;
 }
 
