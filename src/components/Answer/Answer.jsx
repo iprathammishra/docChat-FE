@@ -16,6 +16,7 @@ export const Answer = ({
 }) => {
   const [citations, setCitatitons] = useState([]);
   const [suggestions, setSuggestions] = useState([]);
+  console.log(answer);
 
   useEffect(() => {
     const tempArr = [];

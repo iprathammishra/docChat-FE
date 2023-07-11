@@ -6,18 +6,11 @@ export const ClearNamespace = ({
   className,
   onClick,
   isModalOpen,
-  showModal,
   hideModal,
 }) => {
   return (
     <div>
-      <div
-        className={`${styles.container} ${className}`}
-        onClick={() => {
-          onClick();
-          showModal();
-        }}
-      >
+      <div className={`${styles.container} ${className}`} onClick={onClick}>
         <Delete24Regular />
         <Text>{"Delete Documents"}</Text>
       </div>

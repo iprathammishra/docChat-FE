@@ -8,12 +8,17 @@ import styles from "./Upload.module.css";
 import ContextData from "../../contexts/contextData";
 import { uploadFilesApi } from "../../api";
 
-const UploadButton = ({ className, selectedFiles, setSelectedFiles }) => {
+const UploadButton = ({
+  className,
+  selectedFiles,
+  setSelectedFiles,
+  setCompany,
+}) => {
   const [filesLoaded, setFilesLoaded] = useState(true);
   const [isModalOpen, { setTrue: showModal, setFalse: hideModal }] =
     useBoolean(false);
   const [active, setActive] = useState("local");
-  const [company, setCompany] = useState("");
+  const [companyInput, setCompanyInput] = useState("");
   const { userId } = useContext(ContextData);
   const fileInputRef = useRef(null);
   const formRef = useRef(null);
@@ -29,14 +34,14 @@ const UploadButton = ({ className, selectedFiles, setSelectedFiles }) => {
       formData.append("files", selectedFiles[i]);
     }
 
-    const status = await uploadFilesApi(formData, company, userId);
+    const status = await uploadFilesApi(formData, companyInput, userId);
     if (status <= 299) {
       setFilesLoaded(true);
       hideModal();
       setSelectedFiles([]);
     }
-
-    setCompany("");
+    setCompany(companyInput);
+    setCompanyInput("");
   };
 
   const handleFileInputChange = (event) => {
@@ -89,9 +94,9 @@ const UploadButton = ({ className, selectedFiles, setSelectedFiles }) => {
           <input
             type="text"
             name="company"
-            value={company}
+            value={companyInput}
             placeholder="Company's name..."
-            onChange={(e) => setCompany(e.target.value)}
+            onChange={(e) => setCompanyInput(e.target.value)}
             className={styles.company_input}
           />
           <div
@@ -126,7 +131,7 @@ const UploadButton = ({ className, selectedFiles, setSelectedFiles }) => {
               </div>
             </button>
           )}
-          {selectedFiles.length !== 0 && filesLoaded && company && (
+          {selectedFiles.length !== 0 && filesLoaded && companyInput && (
             <button type="submit" className={styles.submit_btn}>
               Submit
             </button>

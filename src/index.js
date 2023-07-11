@@ -15,7 +15,6 @@ import Signup from "./pages/Auth/Signup";
 import NoPage from "./pages/NoPage";
 import OneShot from "./pages/oneshot/OneShot";
 import Chat from "./pages/chat/Chat";
-import Linkedin from "./pages/linkedin/Linkedin";
 import Navbar from "./components/Navbar";
 import axios from "axios";
 import { BASE_URL } from "./utils/config";
@@ -66,7 +65,6 @@ export default function App() {
           <div ref={navRef} />
           <Navbar />
           <Routes>
-            <Route path="/linkedin" element={<Linkedin />} />
             <Route path="/" element={<Layout />}>
               <Route
                 path="/"

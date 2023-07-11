@@ -1,6 +1,6 @@
 import { Outlet } from "react-router-dom";
 
-import "../../pages/linkedin/Linkedin.css";
+// import "../../pages/linkedin/Linkedin.css";
 import styles from "./Layout.module.css";
 
 const Layout = () => {

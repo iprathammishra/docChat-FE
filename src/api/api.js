@@ -1,8 +1,8 @@
 import axios from "axios";
 import { BASE_URL } from "../utils/config";
 
-export async function chatApi(question, history, mode, userId) {
-  const body = { question, history, userId };
+export async function chatApi(question, history, mode, userId, company) {
+  const body = { question, history, userId, company };
   const response = await axios.post(`${BASE_URL}/query${mode}`, body);
   const parsedResponse = await response.data;
   if (response.status > 299) {

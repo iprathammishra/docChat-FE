@@ -21,9 +21,15 @@ import { BASE_URL } from "../../utils/config";
 import ContextData from "../../contexts/contextData";
 import axios from "axios";
 import { Strawman } from "../../components/Strawman/Strawman";
+import OldChats from "../../components/OldChats/OldChats";
+import ErrorAlert from "../../components/ErrorAlert";
 
 const Chat = ({ navRef, isVisible }) => {
   const [mode, setMode] = useState("QnA");
+  const [alertMessage, setAlertMessage] = useState("");
+  const [showAlert, { toggle: toggleShowAlert }] = useBoolean(false);
+  const [company, setCompany] = useState("");
+  const [panelTab, setPanelTab] = useState("history");
   const [isModalOpen, { setTrue: showModal, setFalse: hideModal }] =
     useBoolean(false);
   const [isConfigPanelOpen, setIsConfigPanelOpen] = useState(false);
@@ -99,8 +105,24 @@ const Chat = ({ navRef, isVisible }) => {
     [isLoading, streamData]
   );
 
+  const showErrorAlert = () => {
+    toggleShowAlert();
+    setTimeout(() => {
+      toggleShowAlert();
+      setAlertMessage("");
+    }, 3000);
+  };
+
   const makeApiRequest = async (question, mode) => {
     lastQuestionRef.current = question;
+
+    if (!company) {
+      setAlertMessage(
+        "You haven't uploaded any files or you can chat with older files!"
+      );
+      showErrorAlert();
+      return;
+    }
 
     if (answers.chat.length === 0) {
       answers["id"] = uuidv4();
@@ -121,13 +143,13 @@ const Chat = ({ navRef, isVisible }) => {
         }
         setStreamData(chunks);
         let conversation = answers.chat;
-        conversation = [...conversation, { user: question, data }];
+        conversation = [...conversation, { user: question, bot: data }];
         setAnswers({ ...answers, chat: conversation });
         if (data.done) {
           eventSource.close();
         }
       });
-      const res = await chatApi(question, answers, mode, userId);
+      const res = await chatApi(question, answers, mode, userId, company);
       if (res) {
         setStreamData("");
       }
@@ -153,7 +175,7 @@ const Chat = ({ navRef, isVisible }) => {
         }
         setStreamData(chunks);
         let conversation = answers.chat;
-        conversation = [...conversation, { user: question, data }];
+        conversation = [...conversation, { user: question, bot: data }];
         setAnswers({ ...answers, chat: conversation });
         if (data.done) {
           eventSource.close();
@@ -181,9 +203,16 @@ const Chat = ({ navRef, isVisible }) => {
   };
 
   const clearDocs = async () => {
-    showModal();
-    const response = await axios.get(`${BASE_URL}/delete?namespace=${userId}`);
-    if (response.status <= 299 || response.statusText === "OK") hideModal();
+    if (!company) {
+      setAlertMessage("You haven't uploaded any files!");
+      showErrorAlert();
+    } else {
+      showModal();
+      const response = await axios.get(
+        `${BASE_URL}/delete?namespace=${company}_${userId}`
+      );
+      if (response.status <= 299 || response.statusText === "OK") hideModal();
+    }
   };
 
   const onSuggestionClicked = (askedQuestion) => {
@@ -234,7 +263,6 @@ const Chat = ({ navRef, isVisible }) => {
         <ClearNamespace
           className={styles.commandButton}
           isModalOpen={isModalOpen}
-          showModal={showModal}
           hideModal={hideModal}
           onClick={clearDocs}
         />
@@ -247,6 +275,7 @@ const Chat = ({ navRef, isVisible }) => {
           selectedFiles={selectedFiles}
           setSelectedFiles={setSelectedFiles}
           className={styles.commandButton}
+          setCompany={setCompany}
         />
         <SettingsButton
           className={styles.commandButton}
@@ -273,7 +302,7 @@ const Chat = ({ navRef, isVisible }) => {
                   <div className={styles.chatMessageGpt}>
                     <Answer
                       key={index}
-                      answer={answer.data}
+                      answer={answer.bot}
                       isSelected={
                         selectedAnswer === index &&
                         activeAnalysisPanelTab !== undefined
@@ -323,6 +352,8 @@ const Chat = ({ navRef, isVisible }) => {
               onSend={(question) => makeApiRequest(question, mode)}
             />
           </div>
+
+          {showAlert && <ErrorAlert message={alertMessage} />}
         </div>
 
         {answers.chat.length > 0 && activeAnalysisPanelTab && (
@@ -331,13 +362,13 @@ const Chat = ({ navRef, isVisible }) => {
             activeCitation={activeCitation}
             onActiveTabChanged={(x) => onToggleTab(x, selectedAnswer)}
             citationHeight="810px"
-            answer={answers.chat[selectedAnswer].data}
+            answer={answers.chat[selectedAnswer].bot}
             activeTab={activeAnalysisPanelTab}
           />
         )}
 
         <Panel
-          headerText="Prompts"
+          headerText="Panel"
           isOpen={isConfigPanelOpen}
           isBlocking={false}
           onDismiss={() => setIsConfigPanelOpen(false)}
@@ -349,7 +380,30 @@ const Chat = ({ navRef, isVisible }) => {
           )}
           isFooterAtBottom={true}
         >
-          <PromptsList />
+          <div className={styles.panel_header}>
+            <p
+              className={panelTab === "history" ? styles.activeTab : null}
+              onClick={() => setPanelTab("history")}
+            >
+              History
+            </p>
+            <p
+              className={panelTab === "prompt" ? styles.activeTab : null}
+              onClick={() => setPanelTab("prompt")}
+            >
+              Prompts
+            </p>
+          </div>
+          {panelTab === "history" ? (
+            <OldChats
+              userId={userId}
+              setAnswers={setAnswers}
+              lastQuestionRef={lastQuestionRef}
+              setCompany={setCompany}
+            />
+          ) : (
+            <PromptsList />
+          )}
         </Panel>
       </div>
     </div>
