@@ -41,10 +41,7 @@ const UploadButton = ({
     }
     formData.append("chatId", answers.id);
 
-    const status = await uploadFilesApi(
-      formData,
-      userId
-    );
+    const status = await uploadFilesApi(formData, userId);
 
     if (status <= 299) {
       setFilesLoaded(true);
@@ -122,6 +119,7 @@ const UploadButton = ({
             type="file"
             multiple
             style={{ display: "none" }}
+            accept=".doc,.docx,.pdf"
           />
           {selectedFiles.length !== 0 &&
             selectedFiles.map((file, i) => {
