@@ -33,6 +33,8 @@ const OldChats = ({ userId, setAnswers, lastQuestionRef, setCompany }) => {
 
   const deleteChat = async (e, id) => {
     e.stopPropagation();
+    setCompany("");
+    setAnswers({ chat: [] });
     setOldChats(oldChats.filter((chat) => chat.chatId !== id));
     await axios.put(`${BASE_URL}/chat/delete/${id}`);
   };

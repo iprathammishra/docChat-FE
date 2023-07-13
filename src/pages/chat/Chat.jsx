@@ -22,6 +22,7 @@ import axios from "axios";
 import { Strawman } from "../../components/Strawman/Strawman";
 import OldChats from "../../components/OldChats/OldChats";
 import ErrorAlert from "../../components/ErrorAlert";
+import { Summarize } from "../../components/Summarize/Summarize";
 
 const Chat = ({ navRef, isVisible }) => {
   const [mode, setMode] = useState("QnA");
@@ -196,6 +197,21 @@ const Chat = ({ navRef, isVisible }) => {
     }
   };
 
+  const createSummary = async () => {
+    const question =
+      "Summarize the whole RFP with proper headings and sub headings.";
+    lastQuestionRef.current = question;
+    setIsLoading(true);
+
+    const res = await axios.post(`${BASE_URL}/summarize`, {
+      chatId: answers.id,
+    });
+    let conversation = answers.chat;
+    conversation = [...conversation, { user: question, bot: res.data }];
+    setIsLoading(false);
+    setAnswers({ ...answers, chat: conversation });
+  };
+
   const newChat = () => {
     lastQuestionRef.current = "";
     error && setError(undefined);
@@ -263,6 +279,11 @@ const Chat = ({ navRef, isVisible }) => {
           disabled={answers.chat.length === 0}
           onClick={createStrawman}
         />
+        <Summarize
+          className={styles.commandButton}
+          disabled={!company}
+          onClick={createSummary}
+        />
         <ClearNamespace
           className={styles.commandButton}
           isModalOpen={isModalOpen}
@@ -279,7 +300,7 @@ const Chat = ({ navRef, isVisible }) => {
         <NewChatButton
           className={styles.commandButton}
           onClick={newChat}
-          disabled={!lastQuestionRef.current || isLoading}
+          disabled={!company}
         />
         <PanelButton
           className={styles.commandButton}
