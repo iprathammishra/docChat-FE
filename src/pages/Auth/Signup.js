@@ -21,7 +21,13 @@ const Signup = () => {
       });
       return navigate("/auth/login");
     } catch (error) {
-      alert(error);
+      setLoader(false);
+      if (error.response?.data.data[0].path === "password") {
+        return alert("Password must contain more than 6 characters!");
+      } else if (error.response?.data.data[0].path === "email") {
+        return alert(error.response.data.data[0].msg);
+      }
+      alert(error.message);
     }
   };
 

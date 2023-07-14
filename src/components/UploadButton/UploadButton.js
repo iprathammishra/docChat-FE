@@ -41,13 +41,23 @@ const UploadButton = ({
     }
     formData.append("chatId", answers.id);
 
-    const status = await uploadFilesApi(formData, userId);
+    let status;
+    try {
+      status = await uploadFilesApi(formData, userId);
+    } catch (e) {
+      alert(e);
+      setFilesLoaded(true);
+      hideModal();
+      setSelectedFiles([]);
+      return;
+    }
 
     if (status <= 299) {
       setFilesLoaded(true);
       hideModal();
       setSelectedFiles([]);
     }
+
     setCompany(companyInput);
     setCompanyInput("");
   };
