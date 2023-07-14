@@ -36,6 +36,7 @@ const OldChats = ({ userId, setAnswers, lastQuestionRef, setCompany }) => {
     setCompany("");
     setAnswers({ chat: [] });
     setOldChats(oldChats.filter((chat) => chat.chatId !== id));
+    lastQuestionRef.current = ""
     await axios.put(`${BASE_URL}/chat/delete/${id}`);
   };
 
