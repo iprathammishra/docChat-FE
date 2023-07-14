@@ -13,6 +13,7 @@ export const Answer = ({
   onCitationClicked,
   onSupportingContentClicked,
   onSuggestionClicked,
+  chatId,
 }) => {
   const [citations, setCitatitons] = useState([]);
   const [suggestions, setSuggestions] = useState([]);
@@ -81,7 +82,7 @@ export const Answer = ({
             <span className={styles.citationLearnMore}>Citations:</span>
             {citations.map((x, i) => {
               const file = x[0].metadata.file;
-              const src = `${BASE_URL}/docs/${file}`;
+              const src = `${BASE_URL}/docs/${chatId}/${file}`;
               return (
                 <a
                   key={i}

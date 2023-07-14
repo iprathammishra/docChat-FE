@@ -328,6 +328,7 @@ const Chat = ({ navRef, isVisible }) => {
                     <Answer
                       key={index}
                       answer={answer.bot}
+                      chatId={answers.id}
                       isSelected={
                         selectedAnswer === index &&
                         activeAnalysisPanelTab !== undefined
