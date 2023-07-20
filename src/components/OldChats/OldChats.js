@@ -2,18 +2,20 @@ import React, { useEffect, useState } from "react";
 import styles from "./OldChats.module.css";
 import { Delete20Regular } from "@fluentui/react-icons";
 import { BASE_URL } from "../../utils/config";
-import axios from "axios";
+import { api } from "../../api/interceptor";
 
 const OldChats = ({ userId, setAnswers, lastQuestionRef, setCompany }) => {
   const [oldChats, setOldChats] = useState([]);
   const [selectedChat, setSelectedChat] = useState();
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     fetchChats();
   }, []);
 
   const fetchChats = async () => {
-    const res = await axios.get(`${BASE_URL}/chat/getall/${userId}`);
+    const res = await api.get(`${BASE_URL}/chat/getall/${userId}`);
+    setIsLoading(false);
     setOldChats(res.data);
   };
 
@@ -36,11 +38,11 @@ const OldChats = ({ userId, setAnswers, lastQuestionRef, setCompany }) => {
     setCompany("");
     setAnswers({ chat: [] });
     setOldChats(oldChats.filter((chat) => chat.chatId !== id));
-    lastQuestionRef.current = ""
-    await axios.put(`${BASE_URL}/chat/delete/${id}`);
+    lastQuestionRef.current = "";
+    await api.put(`${BASE_URL}/chat/delete/${id}`);
   };
 
-  return (
+  return !isLoading ? (
     <div className={styles.container}>
       {oldChats.length !== 0 ? (
         oldChats.map((chat, i) => (
@@ -61,6 +63,8 @@ const OldChats = ({ userId, setAnswers, lastQuestionRef, setCompany }) => {
         <p>No chats found!</p>
       )}
     </div>
+  ) : (
+    <div style={{ marginTop: "20px" }}>Loading...</div>
   );
 };
 

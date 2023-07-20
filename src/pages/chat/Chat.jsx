@@ -18,11 +18,11 @@ import { ClearNamespace } from "../../components/ClearNamespace";
 import { useBoolean } from "@fluentui/react-hooks";
 import { BASE_URL } from "../../utils/config";
 import ContextData from "../../contexts/contextData";
-import axios from "axios";
 import { Strawman } from "../../components/Strawman/Strawman";
 import OldChats from "../../components/OldChats/OldChats";
 import ErrorAlert from "../../components/ErrorAlert";
 import { Summarize } from "../../components/Summarize/Summarize";
+import { api } from "../../api/interceptor";
 
 const Chat = ({ navRef, isVisible }) => {
   const [mode, setMode] = useState("QnA");
@@ -183,7 +183,7 @@ const Chat = ({ navRef, isVisible }) => {
           eventSource.close();
         }
       });
-      const res = await axios.post(`${BASE_URL}/strawman`, {
+      const res = await api.post(`${BASE_URL}/strawman`, {
         question,
         historyString,
         userId,
@@ -203,7 +203,7 @@ const Chat = ({ navRef, isVisible }) => {
     lastQuestionRef.current = question;
     setIsLoading(true);
 
-    const res = await axios.post(`${BASE_URL}/summarize`, {
+    const res = await api.post(`${BASE_URL}/summarize`, {
       chatId: answers.id,
     });
     let conversation = answers.chat;
@@ -227,7 +227,7 @@ const Chat = ({ navRef, isVisible }) => {
       showErrorAlert();
     } else {
       showModal();
-      const response = await axios.get(
+      const response = await api.get(
         `${BASE_URL}/delete?namespace=${answers.id}`
       );
       if (response.status <= 299 || response.statusText === "OK") hideModal();

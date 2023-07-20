@@ -10,12 +10,12 @@ const Navbar = () => {
     useBoolean(false);
   const { setUserId } = useContext(ContextData);
 
-  const logout = (e) => {
-    e.preventDefault();
+  const logout = () => {
     localStorage.removeItem("userId");
-    localStorage.removeItem("token");
+    localStorage.removeItem("accessToken");
     setUserId("");
   };
+
   return (
     <header>
       <img src="GutenbergLogo.png" alt="Logo" className="logo" />

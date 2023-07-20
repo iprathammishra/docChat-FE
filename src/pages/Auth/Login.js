@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import ContextData from "../../contexts/contextData";
@@ -12,29 +12,24 @@ const Login = () => {
   const navigate = useNavigate();
   const dataCtx = useContext(ContextData);
 
+  useEffect(() => {
+    dataCtx.setUserId("");
+  }, []);
+
   const authHandler = async (e) => {
     e.preventDefault();
     setLoader(true);
 
     try {
-      const response = await axios.post(
-        `${BASE_URL}/auth/login`,
-        {
-          email: cred.email,
-          password: cred.password,
-        },
-        {
-          headers: {
-            Authorization: "Bearer " + localStorage.getItem("token"),
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      const response = await axios.post(`${BASE_URL}/auth/login`, {
+        email: cred.email,
+        password: cred.password,
+      });
 
-      const { token, userId } = response.data;
+      const { accessToken, userId } = response.data;
 
       if (userId) {
-        localStorage.setItem("token", token);
+        localStorage.setItem("accessToken", accessToken);
         localStorage.setItem("userId", userId);
         dataCtx.setUserId(userId);
         navigate("/");

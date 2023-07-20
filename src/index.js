@@ -18,13 +18,15 @@ import Navbar from "./components/Navbar";
 import axios from "axios";
 import { BASE_URL } from "./utils/config";
 import { ContextDataProvider } from "./contexts/contextData.js";
+import { api } from "./api/interceptor";
 
 initializeIcons();
 
 export default function App() {
-  const { setUser, userId } = useContext(ContextData);
+  const { setUser, setUserId } = useContext(ContextData);
   const navRef = useRef(null);
   const [isVisible, setIsVisible] = useState(true);
+  const userId = localStorage.getItem("userId");
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -48,11 +50,12 @@ export default function App() {
   useEffect(() => {
     if (userId) {
       fetchUser();
+      setUserId(userId);
     }
   }, [userId]);
 
   const fetchUser = async () => {
-    const response = await axios.get(`${BASE_URL}/auth/${userId}`);
+    const response = await api.get(`${BASE_URL}/auth/${userId}`);
     const { user } = response.data;
     setUser(user[0]);
   };
@@ -87,9 +90,7 @@ export default function App() {
 }
 
 ReactDOM.createRoot(document.getElementById("root")).render(
-  <React.StrictMode>
-    <ContextDataProvider>
-      <App />
-    </ContextDataProvider>
-  </React.StrictMode>
+  <ContextDataProvider>
+    <App />
+  </ContextDataProvider>
 );

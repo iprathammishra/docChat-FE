@@ -1,9 +1,10 @@
 import axios from "axios";
 import { BASE_URL } from "../utils/config";
+import { api } from "./interceptor";
 
 export async function chatApi(question, chatId, mode, userId) {
   const body = { question, chatId, userId };
-  const response = await axios.post(`${BASE_URL}/query${mode}`, body);
+  const response = await api.post(`${BASE_URL}/query${mode}`, body);
   const parsedResponse = await response.data;
   if (response.status > 299) {
     throw Error(parsedResponse.error || "Unknown error");
@@ -12,7 +13,7 @@ export async function chatApi(question, chatId, mode, userId) {
 }
 
 export async function fetchPromptsApi() {
-  const response = await axios.get(`${BASE_URL}/prompt/getAll`);
+  const response = await api.get(`${BASE_URL}/prompt/getAll`);
   const parsedResponse = await response.data;
   if (response.status > 299) {
     throw Error(parsedResponse.error || "Unknown error");
@@ -21,7 +22,7 @@ export async function fetchPromptsApi() {
 }
 
 export async function addPromptApi(body) {
-  const response = await axios.post(`${BASE_URL}/prompt/add`, body);
+  const response = await api.post(`${BASE_URL}/prompt/add`, body);
   const parsedResponse = await response.data;
   if (response.status > 299) {
     throw Error(parsedResponse.error || "Unknown error");
@@ -30,7 +31,7 @@ export async function addPromptApi(body) {
 }
 
 export async function deletePromptApi(id) {
-  const response = await axios.delete(`${BASE_URL}/prompt/delete/${id}`);
+  const response = await api.delete(`${BASE_URL}/prompt/delete/${id}`);
   const parsedResponse = await response.data;
   if (response.status > 299) {
     throw Error(parsedResponse.error || "Unknown error");
@@ -39,7 +40,7 @@ export async function deletePromptApi(id) {
 }
 
 export async function uploadFilesApi(formData, userId) {
-  const response = await axios.post(`${BASE_URL}/upload/${userId}`, formData);
+  const response = await api.post(`${BASE_URL}/upload/${userId}`, formData);
   return response.status;
 }
 
