@@ -4,13 +4,19 @@ import ContextData from "../contexts/contextData";
 import { useBoolean } from "@fluentui/react-hooks";
 import { getTheme, mergeStyleSets, FontWeights, Modal } from "@fluentui/react";
 import { QuestionCircle24Regular } from "@fluentui/react-icons";
+import { useMsal } from "@azure/msal-react";
 
 const Navbar = () => {
   const [isModalOpen, { setTrue: showModal, setFalse: hideModal }] =
     useBoolean(false);
   const { setUserId } = useContext(ContextData);
+  const { instance } = useMsal();
 
   const logout = () => {
+    const loginType = localStorage.getItem("loginType");
+    if (loginType === "ms") {
+      instance.logoutPopup();
+    }
     localStorage.removeItem("userId");
     localStorage.removeItem("accessToken");
     setUserId("");
@@ -18,7 +24,7 @@ const Navbar = () => {
 
   return (
     <header>
-      <img src="GutenbergLogo.png" alt="Logo" className="logo" />
+      <img src="/GutenbergLogo.png" alt="Logo" className="logo" />
       <div className="nav-items">
         <NavLink to="/">
           <p onClick={showModal} className="nav-item nav-chat">

@@ -5,7 +5,7 @@ import ContextData from "../../contexts/contextData";
 import { BASE_URL } from "../../utils/config";
 import "./Login.css";
 
-const Login = () => {
+const Login = ({ handleMsSignin }) => {
   const [showPassword, setShowPassword] = useState(false);
   const [loader, setLoader] = useState(false);
   const [cred, setCred] = useState({});
@@ -31,6 +31,7 @@ const Login = () => {
       if (userId) {
         localStorage.setItem("accessToken", accessToken);
         localStorage.setItem("userId", userId);
+        localStorage.setItem("loginType", "email");
         dataCtx.setUserId(userId);
         navigate("/");
       }
@@ -97,6 +98,27 @@ const Login = () => {
             </button>
           )}
         </form>
+
+        <div className="or">
+          <hr />
+          OR
+          <hr />
+        </div>
+
+        <button
+          onClick={handleMsSignin}
+          className="auth-ms-btn auth-btn"
+          type="submit"
+        >
+          <img
+            width={"15px"}
+            style={{ marginRight: "10px" }}
+            src="/ms_logo.png"
+            alt="ms_logo"
+          />
+          Login with Microsoft
+        </button>
+
         <p className="auth-text">
           Don&apos;t have an account?{" "}
           <span>

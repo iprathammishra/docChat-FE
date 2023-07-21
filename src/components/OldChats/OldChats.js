@@ -45,20 +45,26 @@ const OldChats = ({ userId, setAnswers, lastQuestionRef, setCompany }) => {
   return !isLoading ? (
     <div className={styles.container}>
       {oldChats.length !== 0 ? (
-        oldChats.map((chat, i) => (
-          <div
-            onClick={() => handleChatClick(i)}
-            key={i}
-            className={
-              selectedChat !== i
-                ? `${styles.chatContainer}`
-                : `${styles.chatContainer} ${styles.selectedChat}`
-            }
-          >
-            <div className={styles.chat}>{chat.name}</div>
-            <Delete20Regular onClick={(e) => deleteChat(e, chat.chatId)} />
-          </div>
-        ))
+        oldChats.map((chat, i) => {
+          const date = new Date(chat.createdAt).toDateString();
+          return (
+            <div
+              onClick={() => handleChatClick(i)}
+              key={i}
+              className={
+                selectedChat !== i
+                  ? `${styles.chatContainer}`
+                  : `${styles.chatContainer} ${styles.selectedChat}`
+              }
+            >
+              <div className={styles.details}>
+                <div className={styles.chat}>{chat.name}</div>
+                <div className={styles.date}>{date}</div>
+              </div>
+              <Delete20Regular onClick={(e) => deleteChat(e, chat.chatId)} />
+            </div>
+          );
+        })
       ) : (
         <p>No chats found!</p>
       )}

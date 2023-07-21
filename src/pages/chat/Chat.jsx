@@ -265,7 +265,7 @@ const Chat = ({ navRef, isVisible }) => {
 
   return (
     <div className={styles.container}>
-      {isVisible && (
+      {!isVisible && (
         <div
           onClick={() => navRef.current?.scrollIntoView({ behavior: "smooth" })}
           className={styles.goToTopBtn}
@@ -296,6 +296,7 @@ const Chat = ({ navRef, isVisible }) => {
           className={styles.commandButton}
           setCompany={setCompany}
           answers={answers}
+          company={company}
         />
         <NewChatButton
           className={styles.commandButton}

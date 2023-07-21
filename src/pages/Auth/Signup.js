@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { BASE_URL } from "../../utils/config";
 
-const Signup = () => {
+const Signup = ({ handleMsSignin }) => {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [loader, setLoader] = useState(false);
@@ -102,6 +102,27 @@ const Signup = () => {
             </button>
           )}
         </form>
+
+        <div className="or">
+          <hr />
+          OR
+          <hr />
+        </div>
+
+        <button
+          onClick={handleMsSignin}
+          className="auth-ms-btn auth-btn"
+          type="submit"
+        >
+          <img
+            width={"15px"}
+            style={{ marginRight: "10px" }}
+            src="/ms_logo.png"
+            alt="ms_logo"
+          />
+          Sign in with Microsoft
+        </button>
+
         <p className="auth-text">
           Already have an account?{" "}
           <span>

@@ -105,6 +105,29 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  margin-bottom: 5px;
+}
+
+.or {
+  width: 100%;
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  align-items: center;
+}
+
+.or hr {
+  width: 20%;
+}
+
+.auth-ms-btn {
+  background-image: linear-gradient(
+    to right,
+    #c2ced5 0%,
+    #d1d4d7 51%,
+    #ced9df 100%
+  );
+  color: black;
 }
 
 .auth-btn:hover {

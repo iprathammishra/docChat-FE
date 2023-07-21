@@ -15,6 +15,7 @@ const UploadButton = ({
   setSelectedFiles,
   setCompany,
   answers,
+  company,
 }) => {
   const [filesLoaded, setFilesLoaded] = useState(true);
   const [isModalOpen, { setTrue: showModal, setFalse: hideModal }] =
@@ -111,8 +112,9 @@ const UploadButton = ({
         >
           <input
             type="text"
+            disabled={company}
             name="company"
-            value={companyInput}
+            value={company || companyInput}
             placeholder="Company's name..."
             onChange={(e) => setCompanyInput(e.target.value)}
             className={styles.company_input}
