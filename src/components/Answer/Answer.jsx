@@ -2,10 +2,11 @@ import { useEffect, useState } from "react";
 import { Stack, IconButton } from "@fluentui/react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import Feedback from "../Feedback/Feedback";
 import { BASE_URL } from "../../utils/config";
-import styles from "./Answer.module.css";
-
+import { useBoolean } from "@fluentui/react-hooks";
 import { AnswerIcon } from "./AnswerIcon";
+import styles from "./Answer.module.css";
 
 export const Answer = ({
   answer,
@@ -14,7 +15,12 @@ export const Answer = ({
   onSupportingContentClicked,
   onSuggestionClicked,
   chatId,
+  feedbackHandler,
 }) => {
+  const [
+    isFeedbackModalOpen,
+    { setTrue: showFeedbackModal, setFalse: hideFeedbackModal },
+  ] = useBoolean(false);
   const [citations, setCitatitons] = useState([]);
   const [suggestions, setSuggestions] = useState([]);
 
@@ -48,18 +54,40 @@ export const Answer = ({
           <div>
             <IconButton
               style={{ color: "black" }}
+              iconProps={{ iconName: "Like" }}
+              title="Like the answer"
+              ariaLabel="Like the answer"
+              onClick={() => feedbackHandler("like")}
+            />
+            <IconButton
+              style={{ color: "black" }}
+              iconProps={{ iconName: "Dislike" }}
+              title="Dislike the answer"
+              ariaLabel="Dislike the answer"
+              onClick={showFeedbackModal}
+            />
+            <Feedback
+              type={"answer"}
+              feedbackHandler={feedbackHandler}
+              isFeedbackModalOpen={isFeedbackModalOpen}
+              hideFeedbackModal={hideFeedbackModal}
+            />
+            <IconButton
+              style={{ color: "black" }}
               iconProps={{ iconName: "Copy" }}
               title="Copy the answer"
               ariaLabel="Copy the answer"
               onClick={() => navigator.clipboard.writeText(answer.answer)}
             />
-            <IconButton
-              style={{ color: "black" }}
-              iconProps={{ iconName: "ClipboardList" }}
-              title="Show supporting content"
-              ariaLabel="Show supporting content"
-              onClick={() => onSupportingContentClicked()}
-            />
+            {citations.length !== 0 && (
+              <IconButton
+                style={{ color: "black" }}
+                iconProps={{ iconName: "ClipboardList" }}
+                title="Show supporting content"
+                ariaLabel="Show supporting content"
+                onClick={() => onSupportingContentClicked()}
+              />
+            )}
           </div>
         </Stack>
       </Stack.Item>

@@ -2,7 +2,7 @@ import { useRef, useState, useEffect, useContext } from "react";
 import { Panel, DefaultButton } from "@fluentui/react";
 import { ArrowUp24Regular, SparkleFilled } from "@fluentui/react-icons";
 import styles from "./Chat.module.css";
-import { chatApi } from "../../api";
+import { chatApi, feedbackApi } from "../../api";
 import { Answer, AnswerError, AnswerLoading } from "../../components/Answer";
 import { QuestionInput } from "../../components/QuestionInput";
 import { UserChatMessage } from "../../components/UserChatMessage";
@@ -263,6 +263,29 @@ const Chat = ({ navRef, isVisible }) => {
     setSelectedAnswer(index);
   };
 
+  const feedbackHandler = async (index, activity, feedback) => {
+    let body;
+    if (activity === "like") {
+      body = {
+        question: answers.chat[index].user,
+        answer: answers.chat[index].bot.answer,
+        activity,
+      };
+    } else {
+      body = {
+        question: answers.chat[index].user,
+        answer: answers.chat[index].bot.answer,
+        activity,
+        reason: feedback,
+      };
+    }
+    try {
+      await feedbackApi("answer", body);
+    } catch (err) {
+      alert(err);
+    }
+  };
+
   return (
     <div className={styles.container}>
       {!isVisible && (
@@ -329,6 +352,9 @@ const Chat = ({ navRef, isVisible }) => {
                     <Answer
                       key={index}
                       answer={answer.bot}
+                      feedbackHandler={(activity, reason) =>
+                        feedbackHandler(index, activity, reason)
+                      }
                       chatId={answers.id}
                       isSelected={
                         selectedAnswer === index &&

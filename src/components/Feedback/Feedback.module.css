@@ -25,3 +25,17 @@
 .btnContainer button:hover {
   background-color: #0475f6;
 }
+
+.btnContainer button:disabled {
+  background-color: #797979;
+}
+
+.feedbackInput {
+  width: 100%;
+  resize: none;
+  height: 150px;
+  margin-top: 10px;
+  outline: none;
+  padding: 5px 10px;
+  font-family: "Mukta", sans-serif;
+}

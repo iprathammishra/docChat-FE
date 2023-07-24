@@ -1,9 +1,15 @@
 import { BASE_URL } from "../utils/config";
 import { api } from "./interceptor";
 
-export const hoursSavedApi = async (type, hours) => {
-  const body = { type, hours };
-  const response = await api.post(`${BASE_URL}/feedback/${type}`, body);
+export const feedbackApi = async (type, payload) => {
+  const { hours, reason, question, answer, activity } = payload;
+  let body;
+  if (type === "hours") {
+    body = { type, hours };
+  } else {
+    body = { type, hours, reason, question, answer, activity };
+  }
+  const response = await api.post(`${BASE_URL}/feedback`, body);
   return response;
 };
 

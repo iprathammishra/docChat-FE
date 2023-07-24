@@ -1,23 +1,39 @@
 import React, { useState } from "react";
 import { Modal, Slider, mergeStyleSets } from "@fluentui/react";
 import styles from "./Feedback.module.css";
-import { hoursSavedApi } from "../../api/api";
+import { feedbackApi } from "../../api/api";
 
-const Feedback = ({ isFeedbackModalOpen, hideFeedbackModal, type }) => {
+const Feedback = ({
+  isFeedbackModalOpen,
+  hideFeedbackModal,
+  type,
+  feedbackHandler,
+}) => {
   const [sliderValue, setSliderValue] = useState(0);
+  const [feedback, setFeedback] = useState("");
   const [thanks, setThanks] = useState(false);
   const sliderOnChange = (value) => setSliderValue(value);
 
   const handleSubmitFeedback = async () => {
     try {
-      const res = await hoursSavedApi(type, sliderValue);
-      if (res.status <= 299) {
-        setThanks((prev) => !prev);
-        setTimeout(() => {
-          setThanks((prev) => !prev);
-        }, 4000);
+      if (type === "hours") {
+        await feedbackApi(type, { hours: sliderValue });
+      } else {
+        await feedbackHandler("dislike", feedback);
       }
-      setSliderValue(0);
+      setThanks((prev) => !prev);
+      await new Promise((resolve) =>
+        setTimeout(() => {
+          hideFeedbackModal();
+          setSliderValue(0);
+          setFeedback("");
+          resolve();
+        }, 2000)
+      );
+      // Just for UX
+      setTimeout(() => {
+        setThanks((prev) => !prev);
+      }, 200);
     } catch (err) {
       alert(err);
     }
@@ -26,7 +42,13 @@ const Feedback = ({ isFeedbackModalOpen, hideFeedbackModal, type }) => {
   return (
     <Modal
       isOpen={isFeedbackModalOpen}
-      onDismiss={hideFeedbackModal}
+      onDismiss={() => {
+        hideFeedbackModal();
+        // Just for UX
+        setTimeout(() => {
+          setSliderValue(0);
+        }, 500);
+      }}
       isBlocking={false}
       containerClassName={contentStyles.container}
     >
@@ -55,12 +77,24 @@ const Feedback = ({ isFeedbackModalOpen, hideFeedbackModal, type }) => {
               />
             </>
           ) : (
-            <></>
+            <>
+              <label htmlFor="feedback">
+                Dislike Feedback & Improvement Suggestions{" "}
+                <span style={{ color: "red" }}>*</span>
+                <textarea
+                  name="feedback"
+                  className={styles.feedbackInput}
+                  onChange={(e) => setFeedback(e.target.value)}
+                  value={feedback}
+                ></textarea>
+              </label>
+            </>
           )}
           <div className={styles.btnContainer}>
             <button
               style={{ width: "200px", marginTop: "20px" }}
               onClick={handleSubmitFeedback}
+              disabled={type === "answer" && !feedback}
             >
               Submit
             </button>
