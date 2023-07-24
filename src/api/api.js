@@ -1,6 +1,11 @@
-import axios from "axios";
 import { BASE_URL } from "../utils/config";
 import { api } from "./interceptor";
+
+export const hoursSavedApi = async (type, hours) => {
+  const body = { type, hours };
+  const response = await api.post(`${BASE_URL}/feedback/${type}`, body);
+  return response;
+};
 
 export async function chatApi(question, chatId, mode, userId) {
   const body = { question, chatId, userId };

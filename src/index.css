@@ -50,7 +50,7 @@ header p {
 .nav-items {
   display: flex;
   align-items: center;
-  gap: 30px;
+  gap: 20px;
 }
 
 .nav-items a {
@@ -328,4 +328,8 @@ h1 {
   .filter-options {
     width: 100%;
   }
+}
+
+.ms-layer {
+  display: none;
 }
