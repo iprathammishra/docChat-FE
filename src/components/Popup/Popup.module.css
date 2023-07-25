@@ -1,0 +1,42 @@
+.popupContainer {
+  width: 250px;
+  height: 70px;
+  background-color: white;
+  box-shadow: rgba(50, 50, 93, 0.25) 0px 13px 27px -5px,
+    rgba(0, 0, 0, 0.3) 0px 8px 16px -8px;
+  position: fixed;
+  z-index: 100;
+  top: 80px;
+  left: 20px;
+  display: flex;
+  flex-direction: column;
+  animation: popup 2500ms;
+  border-radius: 10px 10px 0 0;
+  justify-content: space-between;
+}
+
+.progressBar div {
+  padding: 0;
+}
+
+.message {
+  padding: 5px 10px;
+  font-size: 13px;
+  font-weight: 600;
+  font-family: "Montserrat", sans-serif;
+}
+
+@keyframes popup {
+  0% {
+    left: -200px;
+  }
+  25% {
+    left: 20px;
+  }
+  98% {
+    left: 20px;
+  }
+  100% {
+    left: -200px;
+  }
+}

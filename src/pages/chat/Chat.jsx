@@ -20,9 +20,9 @@ import { BASE_URL } from "../../utils/config";
 import ContextData from "../../contexts/contextData";
 import { Strawman } from "../../components/Strawman/Strawman";
 import OldChats from "../../components/OldChats/OldChats";
-import ErrorAlert from "../../components/ErrorAlert";
 import { Summarize } from "../../components/Summarize/Summarize";
 import { api } from "../../api/interceptor";
+import Popup from "../../components/Popup/Popup";
 
 const Chat = ({ navRef, isVisible }) => {
   const [mode, setMode] = useState("QnA");
@@ -110,7 +110,7 @@ const Chat = ({ navRef, isVisible }) => {
     setTimeout(() => {
       toggleShowAlert();
       setAlertMessage("");
-    }, 3000);
+    }, 2500);
   };
 
   const makeApiRequest = async (question, mode) => {
@@ -281,6 +281,10 @@ const Chat = ({ navRef, isVisible }) => {
     }
     try {
       await feedbackApi("answer", body);
+      if (activity === "like") {
+        setAlertMessage("Thanks for submitting the feedback!");
+        showErrorAlert();
+      }
     } catch (err) {
       alert(err);
     }
@@ -405,8 +409,7 @@ const Chat = ({ navRef, isVisible }) => {
               onSend={(question) => makeApiRequest(question, mode)}
             />
           </div>
-
-          {showAlert && <ErrorAlert message={alertMessage} />}
+          {showAlert && <Popup message={alertMessage} />}
         </div>
 
         {answers.chat.length > 0 && activeAnalysisPanelTab && (
