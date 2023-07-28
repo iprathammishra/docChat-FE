@@ -143,6 +143,7 @@ const Chat = ({ navRef, isVisible }) => {
         setAnswers({ ...answers, chat: conversation });
         if (data.done) {
           eventSource.close();
+          setStreamData("");
         }
       });
       const res = await chatApi(question, answers.id, mode, userId);
