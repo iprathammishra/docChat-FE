@@ -1,7 +1,5 @@
 import { useRef, useState, useEffect, useContext } from "react";
-import { Panel, DefaultButton } from "@fluentui/react";
 import { ArrowUp24Regular, SparkleFilled } from "@fluentui/react-icons";
-import styles from "./Chat.module.css";
 import { chatApi, feedbackApi } from "../../api";
 import { Answer, AnswerError, AnswerLoading } from "../../components/Answer";
 import { QuestionInput } from "../../components/QuestionInput";
@@ -10,20 +8,16 @@ import {
   AnalysisPanel,
   AnalysisPanelTabs,
 } from "../../components/AnalysisPanel";
-import { PanelButton } from "../../components/PanelButton";
-import { NewChatButton } from "../../components/NewChatButton";
-import UploadButton from "../../components/UploadButton/UploadButton";
-import PromptsList from "../../components/PromptsList/PromptsList";
-import { ClearNamespace } from "../../components/ClearNamespace";
 import { useBoolean } from "@fluentui/react-hooks";
 import { BASE_URL } from "../../utils/config";
 import ContextData from "../../contexts/contextData";
-import { Strawman } from "../../components/Strawman/Strawman";
-import OldChats from "../../components/OldChats/OldChats";
-import { Summarize } from "../../components/Summarize/Summarize";
 import { api } from "../../api/interceptor";
 import Popup from "../../components/Popup/Popup";
+import Commands from "../../components/CommandsBar/Commands";
+import styles from "./Chat.module.css";
 import { io } from "socket.io-client";
+import SidePanel from "../../components/SidePanel/SidePanel";
+import ModeSwitch from "../../components/ModeSwitch/ModeSwitch";
 
 const socket = io(BASE_URL);
 let currentTimeOut;
@@ -34,7 +28,6 @@ const Chat = ({ navRef, isVisible }) => {
   const [summary, setSummary] = useState(null);
   const [showAlert, { toggle: toggleShowAlert }] = useBoolean(false);
   const [company, setCompany] = useState("");
-  const [panelTab, setPanelTab] = useState("history");
   const [isModalOpen, { setTrue: showModal, setFalse: hideModal }] =
     useBoolean(false);
   const [isConfigPanelOpen, setIsConfigPanelOpen] = useState(false);
@@ -51,59 +44,6 @@ const Chat = ({ navRef, isVisible }) => {
   const chatMessageStreamEnd = useRef(null);
   const { userId } = useContext(ContextData);
   let chunks = "";
-
-  // const AntSwitch = styled(Switch)(({ theme }) => ({
-  //   width: 28,
-  //   height: 16,
-  //   padding: 0,
-  //   display: "flex",
-  //   "&:active": {
-  //     "& .MuiSwitch-thumb": {
-  //       width: 15,
-  //     },
-  //     "& .MuiSwitch-switchBase.Mui-checked": {
-  //       transform: "translateX(9px)",
-  //     },
-  //   },
-  //   "& .MuiSwitch-switchBase": {
-  //     padding: 2,
-  //     "&.Mui-checked": {
-  //       transform: "translateX(12px)",
-  //       color: "#fff",
-  //       "& + .MuiSwitch-track": {
-  //         opacity: 1,
-  //         backgroundColor:
-  //           theme.palette.mode === "dark" ? "#177ddc" : "#1890ff",
-  //       },
-  //     },
-  //   },
-  //   "& .MuiSwitch-thumb": {
-  //     boxShadow: "0 2px 4px 0 rgb(0 35 11 / 20%)",
-  //     width: 12,
-  //     height: 12,
-  //     borderRadius: 6,
-  //     transition: theme.transitions.create(["width"], {
-  //       duration: 200,
-  //     }),
-  //   },
-  //   "& .MuiSwitch-track": {
-  //     borderRadius: 16 / 2,
-  //     opacity: 1,
-  //     backgroundColor:
-  //       theme.palette.mode === "dark"
-  //         ? "rgba(255,255,255,.35)"
-  //         : "rgba(0,0,0,.25)",
-  //     boxSizing: "border-box",
-  //   },
-  // }));
-
-  // const handleChange = () => {
-  //   if (mode === "QnA") {
-  //     setMode("Generative");
-  //   } else {
-  //     setMode("QnA");
-  //   }
-  // };
 
   useEffect(() => {
     socket.on("connect", () => {
@@ -333,54 +273,26 @@ const Chat = ({ navRef, isVisible }) => {
           <ArrowUp24Regular />
         </div>
       )}
-      <div className={styles.commandsContainer}>
-        <Strawman
-          className={styles.commandButton}
-          disabled={answers.chat.length === 0}
-          onClick={createStrawman}
-        />
-        <Summarize
-          className={styles.commandButton}
-          disabled={!summary}
-          company={company}
-          onClick={createSummary}
-        />
-        <ClearNamespace
-          className={styles.commandButton}
-          isModalOpen={isModalOpen}
-          hideModal={hideModal}
-          onClick={clearDocs}
-        />
-        <UploadButton
-          selectedFiles={selectedFiles}
-          setSelectedFiles={setSelectedFiles}
-          className={styles.commandButton}
-          setCompany={setCompany}
-          answers={answers}
-          company={company}
-        />
-        <NewChatButton
-          className={styles.commandButton}
-          onClick={newChat}
-          disabled={!company}
-        />
-        <PanelButton
-          className={styles.commandButton}
-          onClick={() => setIsConfigPanelOpen(!isConfigPanelOpen)}
-        />
-      </div>
+      <Commands
+        answers={answers}
+        createStrawman={createStrawman}
+        summary={summary}
+        company={company}
+        createSummary={createSummary}
+        isModalOpen={isModalOpen}
+        setIsConfigPanelOpen={setIsConfigPanelOpen}
+        hideModal={hideModal}
+        clearDocs={clearDocs}
+        selectedFiles={selectedFiles}
+        setSelectedFiles={setSelectedFiles}
+        setCompany={setCompany}
+        isConfigPanelOpen={isConfigPanelOpen}
+        newChat={newChat}
+      />
       <div className={styles.chatRoot}>
         <div className={styles.chatContainer}>
           {!lastQuestionRef.current ? (
-            <div className={styles.chatEmptyState}>
-              <SparkleFilled
-                fontSize={"70px"}
-                primaryFill={"#1078e7"}
-                aria-hidden="true"
-                aria-label="Chat logo"
-              />
-              <h1 className={styles.chatEmptyStateTitle}>Chat with your RFP</h1>
-            </div>
+            <ModeSwitch />
           ) : (
             <div className={styles.chatMessageStream}>
               {answers.chat.map((answer, index) => (
@@ -456,46 +368,15 @@ const Chat = ({ navRef, isVisible }) => {
             activeTab={activeAnalysisPanelTab}
           />
         )}
-
-        <Panel
-          headerText="Panel"
-          isOpen={isConfigPanelOpen}
-          isBlocking={false}
-          onDismiss={() => setIsConfigPanelOpen(false)}
-          closeButtonAriaLabel="Close"
-          onRenderFooterContent={() => (
-            <DefaultButton onClick={() => setIsConfigPanelOpen(false)}>
-              Close
-            </DefaultButton>
-          )}
-          isFooterAtBottom={true}
-        >
-          <div className={styles.panel_header}>
-            <p
-              className={panelTab === "history" ? styles.activeTab : null}
-              onClick={() => setPanelTab("history")}
-            >
-              History
-            </p>
-            <p
-              className={panelTab === "prompt" ? styles.activeTab : null}
-              onClick={() => setPanelTab("prompt")}
-            >
-              Prompts
-            </p>
-          </div>
-          {panelTab === "history" ? (
-            <OldChats
-              userId={userId}
-              setAnswers={setAnswers}
-              lastQuestionRef={lastQuestionRef}
-              setCompany={setCompany}
-              setSummary={setSummary}
-            />
-          ) : (
-            <PromptsList />
-          )}
-        </Panel>
+        <SidePanel
+          isConfigPanelOpen={isConfigPanelOpen}
+          setIsConfigPanelOpen={setIsConfigPanelOpen}
+          userId={userId}
+          setAnswers={setAnswers}
+          setCompany={setCompany}
+          setSummary={setSummary}
+          lastQuestionRef={lastQuestionRef}
+        />
       </div>
     </div>
   );
