@@ -1,5 +1,5 @@
 import { useRef, useState, useEffect, useContext } from "react";
-import { ArrowUp24Regular, SparkleFilled } from "@fluentui/react-icons";
+import { ArrowUp24Regular } from "@fluentui/react-icons";
 import { chatApi, feedbackApi } from "../../api";
 import { Answer, AnswerError, AnswerLoading } from "../../components/Answer";
 import { QuestionInput } from "../../components/QuestionInput";
@@ -23,7 +23,6 @@ const socket = io(BASE_URL);
 let currentTimeOut;
 
 const Chat = ({ navRef, isVisible }) => {
-  const [mode, setMode] = useState("QnA");
   const [alertMessage, setAlertMessage] = useState("");
   const [summary, setSummary] = useState(null);
   const [showAlert, { toggle: toggleShowAlert }] = useBoolean(false);
@@ -42,7 +41,7 @@ const Chat = ({ navRef, isVisible }) => {
   const [answers, setAnswers] = useState({ chat: [] });
   const lastQuestionRef = useRef("");
   const chatMessageStreamEnd = useRef(null);
-  const { userId } = useContext(ContextData);
+  const { userId, mode } = useContext(ContextData);
   let chunks = "";
 
   useEffect(() => {

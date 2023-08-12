@@ -7,11 +7,14 @@ const ContextData = createContext({
   setUserId: () => {},
   user: {},
   setUser: () => {},
+  mode: {},
+  setMode: () => {},
 });
 
 export const ContextDataProvider = (props) => {
   const [userId, setUserId] = useState(userStored || "");
   const [user, setUser] = useState({});
+  const [mode, setMode] = useState("QnA");
 
   return (
     <ContextData.Provider
@@ -20,6 +23,8 @@ export const ContextDataProvider = (props) => {
         setUserId,
         user,
         setUser,
+        mode,
+        setMode,
       }}
     >
       {props.children}
