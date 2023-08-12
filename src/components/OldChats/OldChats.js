@@ -4,7 +4,13 @@ import { Delete20Regular } from "@fluentui/react-icons";
 import { BASE_URL } from "../../utils/config";
 import { api } from "../../api/interceptor";
 
-const OldChats = ({ userId, setAnswers, lastQuestionRef, setCompany }) => {
+const OldChats = ({
+  userId,
+  setAnswers,
+  lastQuestionRef,
+  setCompany,
+  setSummary,
+}) => {
   const [oldChats, setOldChats] = useState([]);
   const [selectedChat, setSelectedChat] = useState();
   const [isLoading, setIsLoading] = useState(true);
@@ -31,6 +37,7 @@ const OldChats = ({ userId, setAnswers, lastQuestionRef, setCompany }) => {
     lastQuestionRef.current = conversation[chatLength - 1]?.user;
     setAnswers({ ...obj });
     setCompany(chat.name);
+    setSummary(chat.summary.summary);
   };
 
   const deleteChat = async (e, id) => {

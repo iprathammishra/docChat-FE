@@ -23,10 +23,15 @@ import OldChats from "../../components/OldChats/OldChats";
 import { Summarize } from "../../components/Summarize/Summarize";
 import { api } from "../../api/interceptor";
 import Popup from "../../components/Popup/Popup";
+import { io } from "socket.io-client";
+
+const socket = io(BASE_URL);
+let currentTimeOut;
 
 const Chat = ({ navRef, isVisible }) => {
   const [mode, setMode] = useState("QnA");
   const [alertMessage, setAlertMessage] = useState("");
+  const [summary, setSummary] = useState(null);
   const [showAlert, { toggle: toggleShowAlert }] = useBoolean(false);
   const [company, setCompany] = useState("");
   const [panelTab, setPanelTab] = useState("history");
@@ -100,14 +105,33 @@ const Chat = ({ navRef, isVisible }) => {
   //   }
   // };
 
+  useEffect(() => {
+    socket.on("connect", () => {
+      socket.emit("create_room", userId);
+    });
+
+    socket.on("summary", (data) => {
+      setSummary(data);
+      setAlertMessage("Summary is ready!");
+      showErrorAlert();
+    });
+
+    return () => {
+      socket.disconnect();
+    };
+  }, []);
+
   useEffect(
     () => chatMessageStreamEnd.current?.scrollIntoView({ behavior: "smooth" }),
     [isLoading, streamData]
   );
 
   const showErrorAlert = () => {
+    if (currentTimeOut) {
+      clearTimeout(currentTimeOut);
+    }
     toggleShowAlert();
-    setTimeout(() => {
+    currentTimeOut = setTimeout(() => {
       toggleShowAlert();
       setAlertMessage("");
     }, 2500);
@@ -147,6 +171,7 @@ const Chat = ({ navRef, isVisible }) => {
         }
       });
       const res = await chatApi(question, answers.id, mode, userId);
+
       if (res) {
         setStreamData("");
       }
@@ -199,6 +224,11 @@ const Chat = ({ navRef, isVisible }) => {
   };
 
   const createSummary = async () => {
+    if (!summary) {
+      setAlertMessage("Generating summary...");
+      showErrorAlert();
+      return;
+    }
     const question =
       "Summarize the whole RFP with proper headings and sub headings.";
     lastQuestionRef.current = question;
@@ -207,6 +237,7 @@ const Chat = ({ navRef, isVisible }) => {
     const res = await api.post(`${BASE_URL}/summarize`, {
       chatId: answers.id,
     });
+    console.log(res.data);
     let conversation = answers.chat;
     conversation = [...conversation, { user: question, bot: res.data }];
     setIsLoading(false);
@@ -219,6 +250,7 @@ const Chat = ({ navRef, isVisible }) => {
     setActiveCitation(undefined);
     setActiveAnalysisPanelTab(undefined);
     setCompany("");
+    setSummary("");
     setAnswers({ chat: [] });
   };
 
@@ -309,7 +341,8 @@ const Chat = ({ navRef, isVisible }) => {
         />
         <Summarize
           className={styles.commandButton}
-          disabled={!company}
+          disabled={!summary}
+          company={company}
           onClick={createSummary}
         />
         <ClearNamespace
@@ -457,6 +490,7 @@ const Chat = ({ navRef, isVisible }) => {
               setAnswers={setAnswers}
               lastQuestionRef={lastQuestionRef}
               setCompany={setCompany}
+              setSummary={setSummary}
             />
           ) : (
             <PromptsList />

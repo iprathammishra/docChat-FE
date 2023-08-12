@@ -1,4 +1,4 @@
-import React, { useContext, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { ArrowUpload24Regular } from "@fluentui/react-icons";
 import { Text } from "@fluentui/react";
 import { useId, useBoolean } from "@fluentui/react-hooks";
@@ -104,7 +104,6 @@ const UploadButton = ({
           </p>
         </div>
         <hr />
-        {/* <div> */}
         <form
           ref={formRef}
           onSubmit={handleFilesUpload}
@@ -152,13 +151,14 @@ const UploadButton = ({
               </div>
             </button>
           )}
-          {selectedFiles.length !== 0 && filesLoaded && companyInput && (
-            <button type="submit" className={styles.submit_btn}>
-              Submit
-            </button>
-          )}
+          {selectedFiles.length !== 0 &&
+            filesLoaded &&
+            (companyInput || company) && (
+              <button type="submit" className={styles.submit_btn}>
+                Submit
+              </button>
+            )}
         </form>
-        {/* </div> */}
       </Modal>
     </div>
   );

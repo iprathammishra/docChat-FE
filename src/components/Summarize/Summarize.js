@@ -1,18 +1,17 @@
 import { Text } from "@fluentui/react";
-import {
-  ContentView24Regular,
-} from "@fluentui/react-icons";
+import { ContentView24Regular } from "@fluentui/react-icons";
 import styles from "./Summarize.module.css";
 
-export const Summarize = ({ className, onClick, disabled }) => {
+export const Summarize = ({ className, onClick, disabled, company }) => {
   return (
-    <div>
+    <div style={{ position: "relative" }}>
+      {company && <div className={disabled ? styles.red : styles.green}></div>}
       <div
         className={`${styles.container} ${className ?? ""} ${
-          disabled && styles.disabled
+          !company ? styles.disabled : disabled ? styles.disabled : null
         }`}
         onClick={() => {
-          if (!disabled) onClick();
+          if (company) onClick();
         }}
       >
         <ContentView24Regular />

@@ -8,3 +8,21 @@
 .disabled {
   opacity: 0.4;
 }
+
+.red,
+.green {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  position: absolute;
+  top: -5px;
+  right: 15px;
+}
+
+.red {
+  background-color: red;
+}
+
+.green {
+  background-color: #0a66c2;
+}

@@ -27,8 +27,11 @@ export const Answer = ({
   useEffect(() => {
     const tempArr = [];
     const set = new Set();
+    console.log(answer);
     answer.citations.forEach((citation) => {
-      const file = citation[0].metadata.file;
+      const file = Array.isArray(citation)
+        ? citation[0].metadata.file
+        : citation.metadata.file;
       if (!set.has(file)) {
         tempArr.push(citation);
         set.add(file);
@@ -109,13 +112,15 @@ export const Answer = ({
           <Stack horizontal wrap tokens={{ childrenGap: 5 }}>
             <span className={styles.citationLearnMore}>Citations:</span>
             {citations.map((x, i) => {
-              const file = x[0].metadata.file;
+              const file = Array.isArray(x)
+                ? x[0].metadata.file
+                : x.metadata.file;
               const src = `${BASE_URL}/docs/${chatId}/${file}`;
               return (
                 <a
                   key={i}
                   className={styles.citation}
-                  title={x}
+                  title={file}
                   onClick={() => onCitationClicked(src)}
                 >
                   {`${++i}. ${file}`}
