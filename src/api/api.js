@@ -13,6 +13,13 @@ export const feedbackApi = async (type, payload) => {
   return response;
 };
 
+export const researchApi = async (input) => {
+  const data = { ...input };
+  const res = await api.post(`${BASE_URL}/research/answer`, data);
+  console.log(res.data);
+  return res.data;
+};
+
 export async function chatApi(question, chatId, mode, userId) {
   const body = { question, chatId, userId };
   const response = await api.post(`${BASE_URL}/query${mode}`, body);

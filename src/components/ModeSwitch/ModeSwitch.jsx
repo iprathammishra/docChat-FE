@@ -1,4 +1,3 @@
-import { ChartMultipleFilled, SearchInfoFilled } from "@fluentui/react-icons";
 import { useContext } from "react";
 import ContextData from "../../contexts/contextData";
 import { Icon } from "@fluentui/react/lib/Icon";

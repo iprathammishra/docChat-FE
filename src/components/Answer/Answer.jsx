@@ -27,7 +27,6 @@ export const Answer = ({
   useEffect(() => {
     const tempArr = [];
     const set = new Set();
-    console.log(answer);
     answer.citations.forEach((citation) => {
       const file = Array.isArray(citation)
         ? citation[0].metadata.file
@@ -94,19 +93,14 @@ export const Answer = ({
           </div>
         </Stack>
       </Stack.Item>
-
       <Stack.Item grow>
         <ReactMarkdown
           remarkPlugins={[remarkGfm]}
           className={styles.answerText}
-          // dangerouslySetInnerHTML={{
-          //   __html: marked(answer.answer),
-          // }}
         >
           {answer.answer}
         </ReactMarkdown>
       </Stack.Item>
-
       {citations.length !== 0 && (
         <Stack.Item>
           <Stack horizontal wrap tokens={{ childrenGap: 5 }}>

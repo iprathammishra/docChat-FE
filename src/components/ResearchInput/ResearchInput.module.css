@@ -5,11 +5,14 @@
   width: 100%;
   padding: 15px;
   background: white;
+  display: flex;
+  gap: 10px;
 }
 
 .questionInputTextArea {
   width: 100%;
   line-height: 40px;
+  outline: none;
 }
 
 .questionInputButtonsContainer {

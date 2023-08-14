@@ -18,6 +18,8 @@ import styles from "./Chat.module.css";
 import { io } from "socket.io-client";
 import SidePanel from "../../components/SidePanel/SidePanel";
 import ModeSwitch from "../../components/ModeSwitch/ModeSwitch";
+import ResearchInput from "../../components/ResearchInput/ResearchInput";
+import ResearchAnswer from "../../components/ResearchAnswer/ResearchAnswer";
 
 const socket = io(BASE_URL);
 let currentTimeOut;
@@ -39,6 +41,7 @@ const Chat = ({ navRef, isVisible }) => {
     useState(undefined);
   const [selectedAnswer, setSelectedAnswer] = useState(0);
   const [answers, setAnswers] = useState({ chat: [] });
+  const [report, setReport] = useState("");
   const lastQuestionRef = useRef("");
   const chatMessageStreamEnd = useRef(null);
   const { userId, mode } = useContext(ContextData);
@@ -176,7 +179,6 @@ const Chat = ({ navRef, isVisible }) => {
     const res = await api.post(`${BASE_URL}/summarize`, {
       chatId: answers.id,
     });
-    console.log(res.data);
     let conversation = answers.chat;
     conversation = [...conversation, { user: question, bot: res.data }];
     setIsLoading(false);
@@ -290,69 +292,76 @@ const Chat = ({ navRef, isVisible }) => {
       />
       <div className={styles.chatRoot}>
         <div className={styles.chatContainer}>
-          {!lastQuestionRef.current ? (
-            <ModeSwitch />
-          ) : (
-            <div className={styles.chatMessageStream}>
-              {answers.chat.map((answer, index) => (
-                <div key={index}>
-                  <UserChatMessage message={answer.user} />
-                  <div className={styles.chatMessageGpt}>
-                    <Answer
-                      key={index}
-                      answer={answer.bot}
-                      feedbackHandler={(activity, reason) =>
-                        feedbackHandler(index, activity, reason)
-                      }
-                      chatId={answers.id}
-                      isSelected={
-                        selectedAnswer === index &&
-                        activeAnalysisPanelTab !== undefined
-                      }
-                      onCitationClicked={(c) => onShowCitation(c, index)}
-                      onSuggestionClicked={onSuggestionClicked}
-                      onSupportingContentClicked={() =>
-                        onToggleTab(
-                          AnalysisPanelTabs.SupportingContentTab,
-                          index
-                        )
-                      }
-                    />
+          <div className={styles.chatMessageStream}>
+            {!company ? (
+              <ModeSwitch />
+            ) : mode === "research" ? (
+              <ResearchAnswer report={report} />
+            ) : (
+              <>
+                {answers.chat.map((answer, index) => (
+                  <div key={index}>
+                    <UserChatMessage message={answer.user} />
+                    <div className={styles.chatMessageGpt}>
+                      <Answer
+                        key={index}
+                        answer={answer.bot}
+                        feedbackHandler={(activity, reason) =>
+                          feedbackHandler(index, activity, reason)
+                        }
+                        chatId={answers.id}
+                        isSelected={
+                          selectedAnswer === index &&
+                          activeAnalysisPanelTab !== undefined
+                        }
+                        onCitationClicked={(c) => onShowCitation(c, index)}
+                        onSuggestionClicked={onSuggestionClicked}
+                        onSupportingContentClicked={() =>
+                          onToggleTab(
+                            AnalysisPanelTabs.SupportingContentTab,
+                            index
+                          )
+                        }
+                      />
+                    </div>
                   </div>
+                ))}
+              </>
+            )}
+            {isLoading && (
+              <>
+                <UserChatMessage message={lastQuestionRef.current} />
+                <div className={styles.chatMessageGptMinWidth}>
+                  <AnswerLoading />
                 </div>
-              ))}
-              {isLoading && (
-                <>
-                  <UserChatMessage message={lastQuestionRef.current} />
-                  <div className={styles.chatMessageGptMinWidth}>
-                    <AnswerLoading />
-                  </div>
-                </>
-              )}
-              {error ? (
-                <>
-                  <UserChatMessage message={lastQuestionRef.current} />
-                  <div className={styles.chatMessageGptMinWidth}>
-                    <AnswerError
-                      error={error.toString()}
-                      onRetry={() =>
-                        makeApiRequest(lastQuestionRef.current, mode)
-                      }
-                    />
-                  </div>
-                </>
-              ) : null}
-              <div ref={chatMessageStreamEnd} />
-            </div>
-          )}
-
+              </>
+            )}
+            {error ? (
+              <>
+                <UserChatMessage message={lastQuestionRef.current} />
+                <div className={styles.chatMessageGptMinWidth}>
+                  <AnswerError
+                    error={error.toString()}
+                    onRetry={() =>
+                      makeApiRequest(lastQuestionRef.current, mode)
+                    }
+                  />
+                </div>
+              </>
+            ) : null}
+            <div ref={chatMessageStreamEnd} />
+          </div>
           <div className={styles.chatInput}>
-            <QuestionInput
-              clearOnSend
-              placeholder="Ask me anything..."
-              disabled={isLoading || streamData}
-              onSend={(question) => makeApiRequest(question, mode)}
-            />
+            {mode === "research" ? (
+              <ResearchInput setReport={setReport} setCompany={setCompany} />
+            ) : (
+              <QuestionInput
+                clearOnSend
+                placeholder="Ask me anything..."
+                disabled={isLoading || streamData}
+                onSend={(question) => makeApiRequest(question, mode)}
+              />
+            )}
           </div>
           {showAlert && <Popup message={alertMessage} />}
         </div>
