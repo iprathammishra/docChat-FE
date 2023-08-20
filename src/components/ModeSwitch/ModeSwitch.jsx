@@ -10,11 +10,11 @@ const ModeSwitch = () => {
     <div className={styles.chatEmptyState}>
       <div className={styles.container}>
         <div
-          className={`${styles.rfp} ${mode === "QnA" && styles.activeMode}`}
-          onClick={() => setMode("QnA")}
+          className={`${styles.rfp} ${mode === "rfp" && styles.activeMode}`}
+          onClick={() => setMode("rfp")}
         >
           <Icon className={styles.icon} iconName="ComplianceAudit" />
-          <p>RFP Tool</p>
+          <p>RFP</p>
         </div>
         <div
           className={`${styles.research} ${
@@ -23,7 +23,7 @@ const ModeSwitch = () => {
           onClick={() => setMode("research")}
         >
           <Icon className={styles.icon} iconName="Financial" />
-          <p>Research Tool</p>
+          <p>Research</p>
         </div>
       </div>
     </div>

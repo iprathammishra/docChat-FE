@@ -14,12 +14,12 @@ import ContextData from "../../contexts/contextData";
 import { api } from "../../api/interceptor";
 import Popup from "../../components/Popup/Popup";
 import Commands from "../../components/CommandsBar/Commands";
-import styles from "./Chat.module.css";
-import { io } from "socket.io-client";
 import SidePanel from "../../components/SidePanel/SidePanel";
 import ModeSwitch from "../../components/ModeSwitch/ModeSwitch";
 import ResearchInput from "../../components/ResearchInput/ResearchInput";
 import ResearchAnswer from "../../components/ResearchAnswer/ResearchAnswer";
+import styles from "./Chat.module.css";
+import { io } from "socket.io-client";
 
 const socket = io(BASE_URL);
 let currentTimeOut;
@@ -45,6 +45,7 @@ const Chat = ({ navRef, isVisible }) => {
   const lastQuestionRef = useRef("");
   const chatMessageStreamEnd = useRef(null);
   const { userId, mode } = useContext(ContextData);
+  const [researchId, setResearchId] = useState("");
   let chunks = "";
 
   useEffect(() => {
@@ -112,7 +113,7 @@ const Chat = ({ navRef, isVisible }) => {
           setStreamData("");
         }
       });
-      const res = await chatApi(question, answers.id, mode, userId);
+      const res = await chatApi(question, answers.id, userId);
 
       if (res) {
         setStreamData("");
@@ -239,20 +240,38 @@ const Chat = ({ navRef, isVisible }) => {
 
   const feedbackHandler = async (index, activity, feedback) => {
     let body;
-    if (activity === "like") {
-      body = {
-        question: answers.chat[index].user,
-        answer: answers.chat[index].bot.answer,
-        activity,
-      };
+    if (mode === "rfp") {
+      if (activity === "like") {
+        body = {
+          question: answers.chat[index].user,
+          answer: answers.chat[index].bot.answer,
+          activity,
+        };
+      } else {
+        body = {
+          question: answers.chat[index].user,
+          answer: answers.chat[index].bot.answer,
+          activity,
+          reason: feedback,
+        };
+      }
     } else {
-      body = {
-        question: answers.chat[index].user,
-        answer: answers.chat[index].bot.answer,
-        activity,
-        reason: feedback,
-      };
+      if (activity === "like") {
+        body = {
+          question: `Report on ${company}`,
+          answer: report,
+          activity,
+        };
+      } else {
+        body = {
+          question: `Report on ${company}`,
+          answer: report,
+          activity,
+          reason: feedback,
+        };
+      }
     }
+
     try {
       await feedbackApi("answer", body);
       if (activity === "like") {
@@ -296,7 +315,13 @@ const Chat = ({ navRef, isVisible }) => {
             {!company ? (
               <ModeSwitch />
             ) : mode === "research" ? (
-              <ResearchAnswer report={report} />
+              <ResearchAnswer
+                report={report}
+                isLoading={isLoading}
+                feedbackHandler={(activity, reason) =>
+                  feedbackHandler(null, activity, reason)
+                }
+              />
             ) : (
               <>
                 {answers.chat.map((answer, index) => (
@@ -328,7 +353,7 @@ const Chat = ({ navRef, isVisible }) => {
                 ))}
               </>
             )}
-            {isLoading && (
+            {isLoading && mode !== "research" && (
               <>
                 <UserChatMessage message={lastQuestionRef.current} />
                 <div className={styles.chatMessageGptMinWidth}>
@@ -353,7 +378,13 @@ const Chat = ({ navRef, isVisible }) => {
           </div>
           <div className={styles.chatInput}>
             {mode === "research" ? (
-              <ResearchInput setReport={setReport} setCompany={setCompany} />
+              <ResearchInput
+                setReport={setReport}
+                setCompany={setCompany}
+                setIsLoading={setIsLoading}
+                isLoading={isLoading}
+                setResearchId={setResearchId}
+              />
             ) : (
               <QuestionInput
                 clearOnSend
@@ -384,6 +415,8 @@ const Chat = ({ navRef, isVisible }) => {
           setCompany={setCompany}
           setSummary={setSummary}
           lastQuestionRef={lastQuestionRef}
+          setReport={setReport}
+          setResearchId={setResearchId}
         />
       </div>
     </div>

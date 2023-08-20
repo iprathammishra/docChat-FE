@@ -17,6 +17,7 @@
   border-radius: 10px;
   align-items: center;
   box-shadow: #0000003d 0px 3px 8px;
+  transform: scale(0.75);
 }
 
 .container div {
@@ -36,11 +37,16 @@
 
 .container div p {
   margin-bottom: 0;
+  color: #3c4a5a;
 }
 
 .activeMode {
   background-color: #f2f2f2 !important;
   border: 1px solid #d1d1d18a;
+}
+
+.activeMode p {
+  color: #000 !important;
 }
 
 .icon {

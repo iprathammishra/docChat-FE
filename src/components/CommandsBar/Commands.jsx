@@ -28,7 +28,7 @@ const Commands = ({
 
   return (
     <div className={styles.commandsContainer}>
-      {mode === "QnA" && (
+      {mode === "rfp" && (
         <>
           <Strawman
             className={styles.commandButton}

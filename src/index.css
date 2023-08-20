@@ -333,3 +333,7 @@ h1 {
 .ms-layer {
   display: none;
 }
+
+.ms-ProgressIndicator-progressBar {
+  background-color: green;
+}

@@ -1,10 +1,11 @@
-import { Stack, TextField } from "@fluentui/react";
+import { Stack, TextField, setIconOptions } from "@fluentui/react";
 import styles from "./ResearchInput.module.css";
 import { Send28Filled } from "@fluentui/react-icons";
 import { useState } from "react";
+import { v4 as uuidv4 } from "uuid";
 import { researchApi } from "../../api";
 
-const ResearchInput = ({ setReport, setCompany }) => {
+const ResearchInput = ({ setReport, setCompany, setIsLoading, isLoading, setResearchId }) => {
   const [input, setInput] = useState({
     company: "",
     url: "",
@@ -23,12 +24,16 @@ const ResearchInput = ({ setReport, setCompany }) => {
     if (!input.url && !input.company) {
       return;
     }
+    setIsLoading(true);
+    const id = uuidv4();
+    setResearchId(id);
     setReport("");
     setCompany(input.company);
     setInput({ company: "", url: "" });
     try {
-      const res = await researchApi(input);
+      const res = await researchApi(input, id);
       setReport(res.answer);
+      setIsLoading(false);
     } catch (error) {
       console.log(error);
     }
@@ -63,7 +68,7 @@ const ResearchInput = ({ setReport, setCompany }) => {
       <div className={styles.questionInputButtonsContainer}>
         <div
           className={`${styles.questionInputSendButton} ${
-            !input.company || !input.url
+            !input.company || !input.url || isLoading
               ? styles.questionInputSendButtonDisabled
               : ""
           }`}

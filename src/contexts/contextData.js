@@ -14,7 +14,7 @@ const ContextData = createContext({
 export const ContextDataProvider = (props) => {
   const [userId, setUserId] = useState(userStored || "");
   const [user, setUser] = useState({});
-  const [mode, setMode] = useState("QnA");
+  const [mode, setMode] = useState("rfp");
 
   return (
     <ContextData.Provider

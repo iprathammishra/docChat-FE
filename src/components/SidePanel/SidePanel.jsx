@@ -1,19 +1,31 @@
 import React, { useState } from "react";
 import PromptsList from "../PromptsList/PromptsList";
 import OldChats from "../OldChats/OldChats";
-import { DefaultButton, Panel } from "@fluentui/react";
+import { DefaultButton, Dropdown, Panel } from "@fluentui/react";
 import styles from "./SidePanel.module.css";
+
+const OPTIONS = [
+  { key: "all", text: "All" },
+  { key: "rfp", text: "RFP" },
+  { key: "research", text: "Research" },
+];
 
 const SidePanel = ({
   isConfigPanelOpen,
   setIsConfigPanelOpen,
-  userId,
   setAnswers,
   setCompany,
   setSummary,
   lastQuestionRef,
+  setReport,
+  setResearchId,
 }) => {
   const [panelTab, setPanelTab] = useState("history");
+  const [selectedItem, setSelectedItem] = useState({ key: "all", text: "All" });
+
+  const onChange = (event, item) => {
+    setSelectedItem(item);
+  };
 
   return (
     <Panel
@@ -44,13 +56,25 @@ const SidePanel = ({
         </p>
       </div>
       {panelTab === "history" ? (
-        <OldChats
-          userId={userId}
-          setAnswers={setAnswers}
-          lastQuestionRef={lastQuestionRef}
-          setCompany={setCompany}
-          setSummary={setSummary}
-        />
+        <>
+          <Dropdown
+            selectedKey={selectedItem ? selectedItem.key : undefined}
+            defaultSelectedKey={"all"}
+            // eslint-disable-next-line react/jsx-no-bind
+            onChange={onChange}
+            placeholder="All"
+            options={OPTIONS}
+          />
+          <OldChats
+            setAnswers={setAnswers}
+            selectedType={selectedItem.key}
+            lastQuestionRef={lastQuestionRef}
+            setCompany={setCompany}
+            setSummary={setSummary}
+            setReport={setReport}
+            setResearchId={setResearchId}
+          />
+        </>
       ) : (
         <PromptsList />
       )}
