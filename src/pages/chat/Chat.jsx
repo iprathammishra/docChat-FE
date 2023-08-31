@@ -21,7 +21,9 @@ import ResearchAnswer from "../../components/ResearchAnswer/ResearchAnswer";
 import styles from "./Chat.module.css";
 import { io } from "socket.io-client";
 
-const socket = io(BASE_URL);
+const url = BASE_URL.replace("http", "ws");
+const socket = io(url);
+
 let currentTimeOut;
 
 const Chat = ({ navRef, isVisible }) => {
