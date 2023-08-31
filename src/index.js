@@ -20,6 +20,7 @@ import { BASE_URL, REACT_APP_BASE_URL } from "./utils/config";
 import { ContextDataProvider } from "./contexts/contextData.js";
 import { api } from "./api/interceptor";
 import axios from "axios";
+import Maintenance from "./pages/Maintenance/Maintenance";
 
 const pca = new PublicClientApplication({
   auth: {
@@ -104,7 +105,8 @@ export default function App() {
 
   return (
     <>
-      {userId ? (
+      <Maintenance />
+      {/* {userId ? (
         <Router>
           <div ref={navRef} />
           <Navbar />
@@ -132,7 +134,7 @@ export default function App() {
             <Route path="*" element={<Navigate to="/auth/signup" replace />} />
           </Routes>
         </Router>
-      )}
+      )} */}
     </>
   );
 }
