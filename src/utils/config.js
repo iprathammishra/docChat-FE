@@ -1,6 +1,6 @@
 // Constants.js
 const productionUrl =
-  process.env.REACT_PRODUCTION_URL || "http://4.224.85.87:9090";
+  process.env.REACT_PRODUCTION_URL || "https://rfp-tool.azurewebsites.net";
 const developmentUrl = "http://localhost:9000";
 export const BASE_URL =
   process.env.NODE_ENV === "development" ? developmentUrl : productionUrl;
